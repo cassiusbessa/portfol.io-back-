@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  orange-portfolio-postgres:
+    image: postgres:latest
+    container_name: orange-portfolio-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orange-portfolio
+    networks:
+      - orange-portfolio-network
+
+  orange-portfolio-app:
+    build:
+      context: .
+    image: orange-portfolio-app:latest
+    container_name: orange-portfolio-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - orange-portfolio-postgres
+    networks:
+      - orange-portfolio-network
+
+networks:
+  orange-portfolio-network:
+    driver: bridge

@@ -70,12 +70,7 @@ func (u User) validator() error {
 	return nil
 }
 
-func NewUser(fullName, email, pass string) (*User, error) {
-	user := User{
-		FullName: fullName,
-		Email:    email,
-		Password: pass,
-	}
+func NewUser(user User) (*User, error) {
 	err := user.validator()
 	if err != nil {
 		return nil, err

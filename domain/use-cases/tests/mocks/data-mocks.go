@@ -19,13 +19,13 @@ func (m *MockUserRepository) CreateUser(user *entities.User) error {
 	return nil
 }
 
-func (m *MockUserRepository) FindUserByEmail(email string) (entities.User, error) {
+func (m *MockUserRepository) FindUserByEmail(email string) (*entities.User, error) {
 	if m.foundedUser {
-		return entities.User{
+		return &entities.User{
 			ID: "validID",
 		}, nil
 	}
-	return entities.User{}, nil
+	return &entities.User{}, nil
 }
 
 type MockCrypto struct {

@@ -10,6 +10,7 @@ type User struct {
 	FullName  string
 	Email     string
 	Password  string
+	Image     *string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeleteAt  *time.Time

@@ -2,14 +2,6 @@ package entities
 
 import "fmt"
 
-func OnlyOneCpfOrCnpjError() error {
-	return fmt.Errorf("only one should be filed, CPF or CNPJ, not both")
-}
-
-func EmptyCpfAndCnpjError() error {
-	return fmt.Errorf("at least one of the fields, CPF or CNPJ, must be filled in")
-}
-
 func EmptyFieldError(field string) error {
 	return fmt.Errorf("\"%s\" is empty", field)
 }

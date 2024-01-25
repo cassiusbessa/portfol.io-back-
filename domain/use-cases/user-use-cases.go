@@ -16,7 +16,7 @@ func NewUserUseCase(userRepository UserRepository, crypto Crypto) UserUseCase {
 
 func (u UserUseCase) CreateUser(user *entities.User) error {
 	founded, _ := u.userRepository.FindUserByEmail(user.Email)
-	if founded.ID != "" {
+	if founded != nil {
 		possibleValues := map[string]string{user.Email: user.Email}
 		return entityAlreadyExists("user", "email", possibleValues)
 	}

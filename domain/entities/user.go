@@ -11,7 +11,8 @@ type User struct {
 	Email     string
 	Password  string
 	CreatedAt time.Time
-	UpdatedAt *time.Time
+	UpdatedAt time.Time
+	DeleteAt  *time.Time
 }
 
 func (u User) validateFullName(fullName string) error {
@@ -75,5 +76,7 @@ func NewUser(user User) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
 	return &user, nil
 }

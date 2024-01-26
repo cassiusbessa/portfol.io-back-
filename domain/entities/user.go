@@ -77,7 +77,12 @@ func NewUser(user User) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	user.CreatedAt = time.Now()
-	user.UpdatedAt = time.Now()
-	return &user, nil
+	return &User{
+		ID:        user.ID,
+		FullName:  user.FullName,
+		Email:     user.Email,
+		Password:  user.Password,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}, nil
 }

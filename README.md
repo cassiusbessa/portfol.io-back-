@@ -1,4 +1,4 @@
-# 🍊 Orange Portfolio Frontend
+# 🍊 Orange Portfolio Backend
 
 Bem-vindo ao repositório do frontend do Orange Portfolio! Este projeto é desenvolvido utilizando React e Material-UI, seguindo as diretrizes do estilo de código Airbnb. Abaixo estão as instruções básicas para iniciar o projeto.
 

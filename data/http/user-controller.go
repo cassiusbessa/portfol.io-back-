@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
@@ -12,12 +13,14 @@ import (
 type UserController struct {
 	userUseCase usecases.UserUseCase
 	crypto      usecases.Crypto
+	token       usecases.Token
 }
 
-func NewUserController(userUseCase usecases.UserUseCase, crypto usecases.Crypto) UserController {
+func NewUserController(userUseCase usecases.UserUseCase, crypto usecases.Crypto, token usecases.Token) UserController {
 	return UserController{
 		userUseCase: userUseCase,
 		crypto:      crypto,
+		token:       token,
 	}
 }
 
@@ -56,9 +59,20 @@ func (u UserController) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
 }
 
+// @Param user body LoginDTO true "User object to be logged in"
+// @Router /users/login [post]
+// @Success 201 {object} Response "Token" {"token": "user_token"}
+// @Failure 401 {object} Response "Unauthorized" {"message": "Unauthorized"}
+// @Failure 500 {object} Response "Internal Server Error" {"message": "Internal Server Error"}
 func (u UserController) Login(c *gin.Context) {
-	email := c.Param("email")
-	user, err := u.userUseCase.FindUserByEmail(email)
+	loginRequest := LoginDTO{}
+	err := c.ShouldBind(&loginRequest)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
+		return
+	}
+	fmt.Println(loginRequest)
+	user, err := u.userUseCase.FindUserByEmail(loginRequest.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
 		return
@@ -67,5 +81,16 @@ func (u UserController) Login(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
 		return
 	}
-	c.JSON(http.StatusOK, user)
+
+	if err = u.crypto.CompareHashAndPassword(user.Password, loginRequest.Password); err != nil {
+		println(err.Error())
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+	token, err := u.token.GenerateToken(user.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }

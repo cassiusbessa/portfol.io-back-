@@ -12,7 +12,6 @@ func TestCreateUserUseCase(t *testing.T) {
 	testcases := []struct {
 		name     string
 		userRepo usecases.UserRepository
-		crypto   usecases.Crypto
 		wantErr  bool
 	}{
 		{

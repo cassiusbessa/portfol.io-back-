@@ -6,6 +6,7 @@ import (
 	bcrypt "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/data/crypto"
 	http "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/data/http"
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/data/postgres"
+	jwt "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/data/token"
 	docs "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/docs"
 	usecases "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/use-cases"
 	swaggerFiles "github.com/swaggo/files"
@@ -33,8 +34,9 @@ func main() {
 
 	userRepo := postgres.NewUserRepository(postgresDb)
 	crypto := bcrypt.NewBcrypt()
+	token := jwt.NewJWT("secret")
 	userUseCase := usecases.NewUserUseCase(userRepo)
-	userController := http.NewUserController(userUseCase, crypto)
+	userController := http.NewUserController(userUseCase, crypto, token)
 
 	docs.SwaggerInfo.Title = "Orange Portfolio"
 	docs.SwaggerInfo.Description = "This provide endpoints to create a portofolio manager."
@@ -44,7 +46,7 @@ func main() {
 	r := http.Router()
 
 	r.POST("/users", userController.CreateUser)
-	r.GET("/users/:email", userController.Login)
+	r.POST("/login", userController.Login)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

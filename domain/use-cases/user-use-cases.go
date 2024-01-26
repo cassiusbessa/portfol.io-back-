@@ -4,13 +4,11 @@ import "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
 
 type UserUseCase struct {
 	userRepository UserRepository
-	crypto         Crypto
 }
 
-func NewUserUseCase(userRepository UserRepository, crypto Crypto) UserUseCase {
+func NewUserUseCase(userRepository UserRepository) UserUseCase {
 	return UserUseCase{
 		userRepository: userRepository,
-		crypto:         crypto,
 	}
 }
 
@@ -20,14 +18,18 @@ func (u UserUseCase) CreateUser(user *entities.User) error {
 		possibleValues := map[string]string{user.Email: user.Email}
 		return entityAlreadyExists("user", "email", possibleValues)
 	}
-	hash, err := u.crypto.HashPassword(user.Password)
-	if err != nil {
-		return err
-	}
-	user.Password = hash
-	err = u.userRepository.CreateUser(user)
+
+	err := u.userRepository.CreateUser(user)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (u UserUseCase) FindUserByEmail(email string) (*entities.User, error) {
+	user, err := u.userRepository.FindUserByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

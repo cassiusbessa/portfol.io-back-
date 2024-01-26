@@ -25,7 +25,7 @@ func (m *MockUserRepository) FindUserByEmail(email string) (*entities.User, erro
 			ID: "validID",
 		}, nil
 	}
-	return &entities.User{}, nil
+	return nil, nil
 }
 
 type MockCrypto struct {

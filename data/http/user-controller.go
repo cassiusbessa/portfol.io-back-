@@ -11,11 +11,13 @@ import (
 
 type UserController struct {
 	userUseCase usecases.UserUseCase
+	crypto      usecases.Crypto
 }
 
-func NewUserController(userUseCase usecases.UserUseCase) UserController {
+func NewUserController(userUseCase usecases.UserUseCase, crypto usecases.Crypto) UserController {
 	return UserController{
 		userUseCase: userUseCase,
+		crypto:      crypto,
 	}
 }
 
@@ -37,8 +39,14 @@ func (u UserController) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	newUser.ID = uuid.New().String()
 
+	newUser.Password, err = u.crypto.HashPassword(newUser.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
+		return
+	}
+
+	newUser.ID = uuid.New().String()
 	err = u.userUseCase.CreateUser(newUser)
 	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{"message": err.Error()})
@@ -46,4 +54,18 @@ func (u UserController) CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
+}
+
+func (u UserController) Login(c *gin.Context) {
+	email := c.Param("email")
+	user, err := u.userUseCase.FindUserByEmail(email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
+		return
+	}
+	if user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
+		return
+	}
+	c.JSON(http.StatusOK, user)
 }

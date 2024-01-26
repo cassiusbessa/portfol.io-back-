@@ -18,26 +18,24 @@ func TestCreateUserUseCase(t *testing.T) {
 		{
 			name:     "should return nil when email doesn't exist",
 			userRepo: data_mocks.NewMockUserRepository(false),
-			crypto:   data_mocks.NewMockCrypto(true),
 			wantErr:  false,
 		},
 		{
 			name:     "should return error when email already exists",
 			userRepo: data_mocks.NewMockUserRepository(true),
-			crypto:   data_mocks.NewMockCrypto(true),
 			wantErr:  true,
 		},
 	}
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			userUseCase := usecases.NewUserUseCase(tc.userRepo, tc.crypto)
+			userUseCase := usecases.NewUserUseCase(tc.userRepo)
 			user := &entities.User{}
 			err := userUseCase.CreateUser(user)
 			if tc.wantErr && err == nil {
-				t.Errorf("expected error but got nil")
+				t.Errorf("expected %v but got nil", tc.wantErr)
 			}
 			if !tc.wantErr && err != nil {
-				t.Errorf("expected nil but got error")
+				t.Errorf("expected nil but got %v", err)
 			}
 		})
 	}

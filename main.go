@@ -33,8 +33,8 @@ func main() {
 
 	userRepo := postgres.NewUserRepository(postgresDb)
 	crypto := bcrypt.NewBcrypt()
-	userUseCase := usecases.NewUserUseCase(userRepo, crypto)
-	userController := http.NewUserController(userUseCase)
+	userUseCase := usecases.NewUserUseCase(userRepo)
+	userController := http.NewUserController(userUseCase, crypto)
 
 	docs.SwaggerInfo.Title = "Orange Portfolio"
 	docs.SwaggerInfo.Description = "This provide endpoints to create a portofolio manager."
@@ -42,7 +42,9 @@ func main() {
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 	docs.SwaggerInfo.BasePath = "/"
 	r := http.Router()
+
 	r.POST("/users", userController.CreateUser)
+	r.GET("/users/:email", userController.Login)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

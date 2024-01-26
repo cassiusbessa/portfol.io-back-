@@ -4,13 +4,14 @@ import (
 	"database/sql"
 
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
+	usecases "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/use-cases"
 )
 
 type UserRepository struct {
 	db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) *UserRepository {
+func NewUserRepository(db *sql.DB) usecases.UserRepository {
 	return &UserRepository{db}
 }
 
@@ -25,7 +26,7 @@ func (r *UserRepository) CreateUser(user *entities.User) error {
 	return nil
 }
 
-func (r *UserRepository) GetUserByEmail(email string) (*entities.User, error) {
+func (r *UserRepository) FindUserByEmail(email string) (*entities.User, error) {
 	var user entities.User
 	var nullImage sql.NullString
 

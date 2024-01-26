@@ -1,0 +1,55 @@
+info:
+  contact: {}
+paths:
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided data
+      parameters:
+      - description: User object to be created
+        in: body
+        name: user
+        required: true
+        schema:
+          type: object
+      - description: Email address
+        example: email@email.com
+        format: email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: User Password (8-32 characters, at least one uppercase letter,
+          one lowercase letter, one number and one special character)
+        example: Password123!
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      - description: Full name of the user
+        example: '"Só Mais Silva"'
+        in: body
+        name: fullName
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created successfully
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new user
+swagger: "2.0"

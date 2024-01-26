@@ -15,6 +15,41 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/login": {
+            "post": {
+                "parameters": [
+                    {
+                        "description": "User object to be logged in",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/http.LoginDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Token\" {\"token\": \"user_token\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized\" {\"message\": \"Unauthorized\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error\" {\"message\": \"Internal Server Error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "parameters": [
@@ -37,41 +72,6 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request\" {\"message\": \"Bad Request\"}",
-                        "schema": {
-                            "$ref": "#/definitions/http.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error\" {\"message\": \"Internal Server Error\"}",
-                        "schema": {
-                            "$ref": "#/definitions/http.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/users/login": {
-            "post": {
-                "parameters": [
-                    {
-                        "description": "User object to be logged in",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/http.LoginDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Token\" {\"token\": \"user_token\"}",
-                        "schema": {
-                            "$ref": "#/definitions/http.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized\" {\"message\": \"Unauthorized\"}",
                         "schema": {
                             "$ref": "#/definitions/http.Response"
                         }

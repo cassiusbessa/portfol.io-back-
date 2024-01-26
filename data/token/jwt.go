@@ -3,7 +3,7 @@ package jwt
 import (
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type JWT struct {
@@ -15,9 +15,10 @@ func NewJWT(secretKey string) *JWT {
 }
 
 func (j *JWT) GenerateToken(userID string) (string, error) {
-	claims := jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
-		Id:        userID,
+	claims := jwt.MapClaims{
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"iat": time.Now().Unix(),
+		"sub": userID,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

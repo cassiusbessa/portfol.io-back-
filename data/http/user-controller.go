@@ -48,7 +48,7 @@ func (u UserController) CreateUser(c *gin.Context) {
 
 	err = u.userUseCase.CreateUser(newUser)
 	if err != nil {
-		c.JSON(http.StatusContinue, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 

@@ -60,7 +60,7 @@ func (u UserController) CreateUser(c *gin.Context) {
 }
 
 // @Param user body LoginDTO true "User object to be logged in"
-// @Router /users/login [post]
+// @Router /login [post]
 // @Success 201 {object} Response "Token" {"token": "user_token"}
 // @Failure 401 {object} Response "Unauthorized" {"message": "Unauthorized"}
 // @Failure 500 {object} Response "Internal Server Error" {"message": "Internal Server Error"}

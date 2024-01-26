@@ -11,6 +11,15 @@ definitions:
         example: Password123!
         type: string
     type: object
+  http.LoginDTO:
+    properties:
+      email:
+        example: email@mail.com
+        type: string
+      password:
+        example: Password123!
+        type: string
+    type: object
   http.Response:
     properties:
       message:
@@ -35,6 +44,28 @@ paths:
             $ref: '#/definitions/http.Response'
         "400":
           description: 'Bad Request" {"message": "Bad Request"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: 'Internal Server Error" {"message": "Internal Server Error"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+  /users/login:
+    post:
+      parameters:
+      - description: User object to be logged in
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/http.LoginDTO'
+      responses:
+        "201":
+          description: 'Token" {"token": "user_token"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "401":
+          description: 'Unauthorized" {"message": "Unauthorized"}'
           schema:
             $ref: '#/definitions/http.Response'
         "500":

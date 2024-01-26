@@ -17,7 +17,10 @@ Para começar, clone o repositório para o seu ambiente local:
 ```bash
 git clone git@github.com:Grupo-38-Orange-Juice/orange-portfolio-back.git
 
-vscode
+```
+## Clonando o Repositório usando o vscode
+
+Para começar, clone o repositório para o seu ambiente local usando o vscode
 https://github.com/Grupo-38-Orange-Juice/orange-portfolio-back.git
 
 ```

@@ -23,7 +23,7 @@ Acesse o diretório do projeto, garanta que seu docker esteja rodando e suba o c
 ```bash
 cd orange-portfolio-back
 sudo service docker start
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 

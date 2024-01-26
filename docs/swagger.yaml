@@ -1,55 +1,44 @@
+definitions:
+  http.CreateUserDTO:
+    properties:
+      email:
+        example: email@mail.com
+        type: string
+      fullName:
+        example: Só Mais Silva
+        type: string
+      password:
+        example: Password123!
+        type: string
+    type: object
+  http.Response:
+    properties:
+      message:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
   /users:
     post:
-      consumes:
-      - application/json
-      description: Create a new user with the provided data
       parameters:
       - description: User object to be created
         in: body
         name: user
         required: true
         schema:
-          type: object
-      - description: Email address
-        example: email@email.com
-        format: email
-        in: body
-        name: email
-        required: true
-        schema:
-          type: string
-      - description: User Password (8-32 characters, at least one uppercase letter,
-          one lowercase letter, one number and one special character)
-        example: Password123!
-        in: body
-        name: password
-        required: true
-        schema:
-          type: string
-      - description: Full name of the user
-        example: '"Só Mais Silva"'
-        in: body
-        name: fullName
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
+          $ref: '#/definitions/http.CreateUserDTO'
       responses:
         "201":
-          description: User created successfully
+          description: 'User created successfully" {"message": "User created successfully"}'
           schema:
-            type: string
+            $ref: '#/definitions/http.Response'
         "400":
-          description: Bad Request
+          description: 'Bad Request" {"message": "Bad Request"}'
           schema:
-            type: string
+            $ref: '#/definitions/http.Response'
         "500":
-          description: Internal Server Error
+          description: 'Internal Server Error" {"message": "Internal Server Error"}'
           schema:
-            type: string
-      summary: Create a new user
+            $ref: '#/definitions/http.Response'
 swagger: "2.0"

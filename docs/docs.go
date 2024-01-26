@@ -17,14 +17,6 @@ const docTemplate = `{
     "paths": {
         "/users": {
             "post": {
-                "description": "Create a new user with the provided data",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Create a new user",
                 "parameters": [
                     {
                         "description": "User object to be created",
@@ -32,60 +24,56 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object"
-                        }
-                    },
-                    {
-                        "format": "email",
-                        "example": "email@email.com",
-                        "description": "Email address",
-                        "name": "email",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "example": "Password123!",
-                        "description": "User Password (8-32 characters, at least one uppercase letter, one lowercase letter, one number and one special character)",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "example": "\"Só Mais Silva\"",
-                        "description": "Full name of the user",
-                        "name": "fullName",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http.CreateUserDTO"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "User created successfully",
+                        "description": "User created successfully\" {\"message\": \"User created successfully\"}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http.Response"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad Request\" {\"message\": \"Bad Request\"}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http.Response"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal Server Error\" {\"message\": \"Internal Server Error\"}",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/http.Response"
                         }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "http.CreateUserDTO": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "email@mail.com"
+                },
+                "fullName": {
+                    "type": "string",
+                    "example": "Só Mais Silva"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "Password123!"
+                }
+            }
+        },
+        "http.Response": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
                 }
             }
         }

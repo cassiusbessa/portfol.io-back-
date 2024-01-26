@@ -36,12 +36,11 @@ func main() {
 	userUseCase := usecases.NewUserUseCase(userRepo, crypto)
 	userController := http.NewUserController(userUseCase)
 
-	docs.SwaggerInfo.Title = "Swagger Example API"
-	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
-	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "petstore.swagger.io"
-	docs.SwaggerInfo.BasePath = "/v2"
+	docs.SwaggerInfo.Title = "Orange Portfolio"
+	docs.SwaggerInfo.Description = "This provide endpoints to create a portofolio manager."
+	docs.SwaggerInfo.Host = "localhost:8080"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+	docs.SwaggerInfo.BasePath = "/"
 	r := http.Router()
 	r.POST("/users", userController.CreateUser)
 

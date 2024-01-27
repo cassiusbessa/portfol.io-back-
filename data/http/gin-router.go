@@ -8,14 +8,16 @@ import (
 func Router() *gin.Engine {
 	ginMode := "release"
 	gin.SetMode(ginMode)
-	r := gin.New()
+	r := gin.Default()
 
+	// Configuração do Middleware CORS
 	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
-	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
-	r.Use(cors.New(config))
+	config.AllowOrigins = []string{"http://localhost:3000"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	config.AllowHeaders = []string{"*"}
+	config.AllowCredentials = true
 
-	r.Use(gin.Recovery())
+	r.Use(cors.New(config))
 
 	return r
 }

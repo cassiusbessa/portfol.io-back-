@@ -24,12 +24,12 @@ func (p ProjectUseCase) CreateProject(project *entities.Project, userId string) 
 	}
 
 	founded, err := p.projectRepository.FindProjectByNameAndUserId(project.Name, userId)
+	if err != nil {
+		return err
+	}
 	if founded != nil {
 		possibleValues := map[string]string{project.Name: project.Name}
 		return entityAlreadyExists("project", "name", possibleValues)
-	}
-	if err != nil {
-		return err
 	}
 
 	err = p.projectRepository.CreateProject(project, userId)
@@ -49,11 +49,11 @@ func (p ProjectUseCase) FindAllProjects() ([]entities.Project, error) {
 
 func (p ProjectUseCase) FindProjectsByUserId(userId string) ([]entities.Project, error) {
 	usr, err := p.UserRepository.FindUserById(userId)
-	if usr == nil {
-		return nil, entityNotFound("user", "id", map[string]string{userId: userId})
-	}
 	if err != nil {
 		return nil, err
+	}
+	if usr == nil {
+		return nil, entityNotFound("user", "id", map[string]string{userId: userId})
 	}
 
 	projects, err := p.projectRepository.FindProjectsByUserId(userId)

@@ -62,3 +62,28 @@ func (p ProjectUseCase) FindProjectsByUserId(userId string) ([]entities.Project,
 	}
 	return projects, nil
 }
+
+func (p ProjectUseCase) UpdateProject(project *entities.Project, userId string) error {
+	user, err := p.UserRepository.FindUserById(userId)
+	if user == nil {
+		return entityNotFound("user", "id", map[string]string{userId: userId})
+	}
+	if err != nil {
+		return err
+	}
+
+	founded, err := p.projectRepository.FindProjectByNameAndUserId(project.Name, userId)
+	if err != nil {
+		return err
+	}
+	if founded != nil {
+		possibleValues := map[string]string{project.Name: project.Name}
+		return entityAlreadyExists("project", "name", possibleValues)
+	}
+
+	_, err = p.projectRepository.UpdateProject(project)
+	if err != nil {
+		return err
+	}
+	return nil
+}

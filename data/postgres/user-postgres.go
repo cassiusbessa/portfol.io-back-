@@ -45,3 +45,23 @@ func (r *UserRepository) FindUserByEmail(email string) (*entities.User, error) {
 	user.Image = &nullImage.String
 	return &user, nil
 }
+
+func (r *UserRepository) FindUserById(id string) (*entities.User, error) {
+	var user entities.User
+	var nullImage sql.NullString
+
+	err := r.db.QueryRow(`
+	SELECT id, full_name, email, password, image, created_at, updated_at, delete_at
+	FROM users
+	WHERE id = $1;
+	`, id).Scan(&user.ID, &user.FullName, &user.Email, &user.Password, &nullImage, &user.CreatedAt, &user.UpdatedAt, &user.DeleteAt)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	user.Image = &nullImage.String
+	return &user, nil
+}

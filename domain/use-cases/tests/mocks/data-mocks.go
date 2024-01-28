@@ -28,6 +28,15 @@ func (m *MockUserRepository) FindUserByEmail(email string) (*entities.User, erro
 	return nil, fmt.Errorf("user not found")
 }
 
+func (m *MockUserRepository) FindUserById(id string) (*entities.User, error) {
+	if m.foundedUser {
+		return &entities.User{
+			ID: "validID",
+		}, nil
+	}
+	return nil, fmt.Errorf("user not found")
+}
+
 type MockCrypto struct {
 	matchedHashes bool
 }
@@ -47,4 +56,65 @@ func (m *MockCrypto) CompareHashAndPassword(hash string, password string) error 
 		return nil
 	}
 	return fmt.Errorf("passwords don't match")
+}
+
+type MockProjectRepository struct {
+	foundedProject bool
+}
+
+func NewMockProjectRepository(foundedProject bool) *MockProjectRepository {
+	return &MockProjectRepository{
+		foundedProject: foundedProject,
+	}
+}
+
+func (m *MockProjectRepository) CreateProject(project *entities.Project, userId string) error {
+	return nil
+}
+
+func (m *MockProjectRepository) FindAllProjects() ([]entities.Project, error) {
+	if m.foundedProject {
+		return []entities.Project{
+			{
+				ID: "validID",
+			},
+		}, nil
+	}
+	return nil, nil
+}
+
+func (m *MockProjectRepository) FindProjectsByUserId(userId string) ([]entities.Project, error) {
+	if m.foundedProject {
+		return []entities.Project{
+			{
+				ID: "validID",
+			},
+		}, nil
+	}
+	return nil, nil
+}
+
+func (m *MockProjectRepository) FindProjectByNameAndUserId(name, userId string) (*entities.Project, error) {
+	if m.foundedProject {
+		return &entities.Project{
+			ID: "validID",
+		}, nil
+	}
+	return nil, nil
+}
+
+func (m *MockProjectRepository) UpdateProject(project *entities.Project) (*entities.Project, error) {
+	if m.foundedProject {
+		return &entities.Project{
+			ID: "validID",
+		}, nil
+	}
+	return nil, nil
+}
+
+func (m *MockProjectRepository) DeleteProject(projectId string) error {
+	if m.foundedProject {
+		return nil
+	}
+	return fmt.Errorf("project not found")
 }

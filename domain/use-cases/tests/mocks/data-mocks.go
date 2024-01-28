@@ -3,7 +3,7 @@ package data_mocks
 import (
 	"fmt"
 
-	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregate"
+	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregates"
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
 )
 
@@ -73,10 +73,10 @@ func (m *MockProjectRepository) CreateProject(project *entities.Project, userId 
 	return nil
 }
 
-func (m *MockProjectRepository) FindAllProjects() ([]aggregate.Project, error) {
-	var projects []aggregate.Project
+func (m *MockProjectRepository) FindAllProjects() ([]aggregates.Project, error) {
+	var projects []aggregates.Project
 	if m.foundedProject {
-		return []aggregate.Project{
+		return []aggregates.Project{
 			{
 				Project: entities.Project{
 					ID: "validID",
@@ -87,11 +87,11 @@ func (m *MockProjectRepository) FindAllProjects() ([]aggregate.Project, error) {
 	return projects, nil
 }
 
-func (m *MockProjectRepository) FindProjectsByUserId(userId string) ([]aggregate.Project, error) {
-	var projects []aggregate.Project
+func (m *MockProjectRepository) FindProjectsByUserId(userId string) ([]aggregates.Project, error) {
+	var projects []aggregates.Project
 
 	if m.foundedProject {
-		return []aggregate.Project{
+		return []aggregates.Project{
 			{
 				Project: entities.Project{
 					ID: "validID",
@@ -102,9 +102,9 @@ func (m *MockProjectRepository) FindProjectsByUserId(userId string) ([]aggregate
 	return projects, nil
 }
 
-func (m *MockProjectRepository) FindProjectByNameAndUserId(name, userId string) (*aggregate.Project, error) {
+func (m *MockProjectRepository) FindProjectByNameAndUserId(name, userId string) (*aggregates.Project, error) {
 	if m.foundedProject {
-		return &aggregate.Project{
+		return &aggregates.Project{
 			Project: entities.Project{
 				ID: "validID",
 			},
@@ -113,9 +113,9 @@ func (m *MockProjectRepository) FindProjectByNameAndUserId(name, userId string) 
 	return nil, nil
 }
 
-func (m *MockProjectRepository) UpdateProject(project *entities.Project) (*aggregate.Project, error) {
+func (m *MockProjectRepository) UpdateProject(project *entities.Project) (*aggregates.Project, error) {
 	if m.foundedProject {
-		return &aggregate.Project{
+		return &aggregates.Project{
 			Project: entities.Project{
 				ID: "validID",
 			},

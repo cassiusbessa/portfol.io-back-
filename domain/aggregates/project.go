@@ -1,4 +1,4 @@
-package aggregate
+package aggregates
 
 import "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
 

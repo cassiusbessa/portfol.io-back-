@@ -8,7 +8,7 @@ type UserUseCases interface {
 }
 
 type ProjectUseCases interface {
-	CreateProject(project *entities.Project) error
+	CreateProject(project *entities.Project, userId string) error
 	FindAllProjects() ([]entities.Project, error)
 	FindProjectsByUserId(userId string) ([]entities.Project, error)
 	UpdateProject(project *entities.Project) error

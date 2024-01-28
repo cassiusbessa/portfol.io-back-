@@ -5,6 +5,7 @@ import (
 
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregates"
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
+	usecases "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/use-cases"
 )
 
 type MockUserRepository struct {
@@ -63,7 +64,7 @@ type MockProjectRepository struct {
 	foundedProject bool
 }
 
-func NewMockProjectRepository(foundedProject bool) *MockProjectRepository {
+func NewMockProjectRepository(foundedProject bool) usecases.ProjectRepository {
 	return &MockProjectRepository{
 		foundedProject: foundedProject,
 	}
@@ -102,12 +103,10 @@ func (m *MockProjectRepository) FindProjectsByUserId(userId string) ([]aggregate
 	return projects, nil
 }
 
-func (m *MockProjectRepository) FindProjectByNameAndUserId(name, userId string) (*aggregates.Project, error) {
+func (m *MockProjectRepository) FindProjectByNameAndUserId(name, userId string) (*entities.Project, error) {
 	if m.foundedProject {
-		return &aggregates.Project{
-			Project: entities.Project{
-				ID: "validID",
-			},
+		return &entities.Project{
+			ID: "validID",
 		}, nil
 	}
 	return nil, nil

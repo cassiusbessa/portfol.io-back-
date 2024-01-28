@@ -60,6 +60,7 @@ func (p ProjectUseCase) FindProjectsByUserId(userId string) ([]aggregates.Projec
 	}
 
 	projects, err := p.projectRepository.FindProjectsByUserId(userId)
+
 	if err != nil {
 		return nil, err
 	}

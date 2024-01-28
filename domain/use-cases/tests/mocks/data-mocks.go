@@ -73,6 +73,7 @@ func (m *MockProjectRepository) CreateProject(project *entities.Project, userId 
 }
 
 func (m *MockProjectRepository) FindAllProjects() ([]entities.Project, error) {
+	var projects []entities.Project
 	if m.foundedProject {
 		return []entities.Project{
 			{
@@ -80,7 +81,7 @@ func (m *MockProjectRepository) FindAllProjects() ([]entities.Project, error) {
 			},
 		}, nil
 	}
-	return nil, nil
+	return projects, nil
 }
 
 func (m *MockProjectRepository) FindProjectsByUserId(userId string) ([]entities.Project, error) {

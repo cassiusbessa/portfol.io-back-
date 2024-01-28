@@ -1,6 +1,9 @@
 package usecases
 
-import "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
+import (
+	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregate"
+	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
+)
 
 type UserRepository interface {
 	CreateUser(user *entities.User) error
@@ -10,9 +13,9 @@ type UserRepository interface {
 
 type ProjectRepository interface {
 	CreateProject(project *entities.Project, userId string) error
-	FindAllProjects() ([]entities.Project, error)
-	FindProjectsByUserId(userId string) ([]entities.Project, error)
-	FindProjectByNameAndUserId(name, userId string) (*entities.Project, error)
-	UpdateProject(project *entities.Project) (*entities.Project, error)
+	FindAllProjects() ([]aggregate.Project, error)
+	FindProjectsByUserId(userId string) ([]aggregate.Project, error)
+	FindProjectByNameAndUserId(name, userId string) (*aggregate.Project, error)
+	UpdateProject(project *entities.Project) (*aggregate.Project, error)
 	DeleteProject(projectId string) error
 }

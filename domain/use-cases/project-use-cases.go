@@ -1,6 +1,9 @@
 package usecases
 
-import "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
+import (
+	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregate"
+	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
+)
 
 type ProjectUseCase struct {
 	projectRepository ProjectRepository
@@ -39,7 +42,7 @@ func (p ProjectUseCase) CreateProject(project *entities.Project, userId string) 
 	return nil
 }
 
-func (p ProjectUseCase) FindAllProjects() ([]entities.Project, error) {
+func (p ProjectUseCase) FindAllProjects() ([]aggregate.Project, error) {
 	projects, err := p.projectRepository.FindAllProjects()
 	if err != nil {
 		return nil, err
@@ -47,7 +50,7 @@ func (p ProjectUseCase) FindAllProjects() ([]entities.Project, error) {
 	return projects, nil
 }
 
-func (p ProjectUseCase) FindProjectsByUserId(userId string) ([]entities.Project, error) {
+func (p ProjectUseCase) FindProjectsByUserId(userId string) ([]aggregate.Project, error) {
 	usr, err := p.UserRepository.FindUserById(userId)
 	if err != nil {
 		return nil, err

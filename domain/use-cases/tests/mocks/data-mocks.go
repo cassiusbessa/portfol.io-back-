@@ -3,6 +3,7 @@ package data_mocks
 import (
 	"fmt"
 
+	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregate"
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
 )
 
@@ -72,44 +73,52 @@ func (m *MockProjectRepository) CreateProject(project *entities.Project, userId 
 	return nil
 }
 
-func (m *MockProjectRepository) FindAllProjects() ([]entities.Project, error) {
-	var projects []entities.Project
+func (m *MockProjectRepository) FindAllProjects() ([]aggregate.Project, error) {
+	var projects []aggregate.Project
 	if m.foundedProject {
-		return []entities.Project{
+		return []aggregate.Project{
 			{
-				ID: "validID",
+				Project: entities.Project{
+					ID: "validID",
+				},
 			},
 		}, nil
 	}
 	return projects, nil
 }
 
-func (m *MockProjectRepository) FindProjectsByUserId(userId string) ([]entities.Project, error) {
-	var projects []entities.Project
+func (m *MockProjectRepository) FindProjectsByUserId(userId string) ([]aggregate.Project, error) {
+	var projects []aggregate.Project
 
 	if m.foundedProject {
-		return []entities.Project{
+		return []aggregate.Project{
 			{
-				ID: "validID",
+				Project: entities.Project{
+					ID: "validID",
+				},
 			},
 		}, nil
 	}
 	return projects, nil
 }
 
-func (m *MockProjectRepository) FindProjectByNameAndUserId(name, userId string) (*entities.Project, error) {
+func (m *MockProjectRepository) FindProjectByNameAndUserId(name, userId string) (*aggregate.Project, error) {
 	if m.foundedProject {
-		return &entities.Project{
-			ID: "validID",
+		return &aggregate.Project{
+			Project: entities.Project{
+				ID: "validID",
+			},
 		}, nil
 	}
 	return nil, nil
 }
 
-func (m *MockProjectRepository) UpdateProject(project *entities.Project) (*entities.Project, error) {
+func (m *MockProjectRepository) UpdateProject(project *entities.Project) (*aggregate.Project, error) {
 	if m.foundedProject {
-		return &entities.Project{
-			ID: "validID",
+		return &aggregate.Project{
+			Project: entities.Project{
+				ID: "validID",
+			},
 		}, nil
 	}
 	return nil, nil

@@ -22,7 +22,7 @@ func TestCreateProjectUseCase(t *testing.T) {
 			wantErr:     false,
 		},
 		{
-			name:        "should return error when project already exists",
+			name:        "should return error when there is already a project with the same name from the same user",
 			projectRepo: data_mocks.NewMockProjectRepository(true),
 			userRepo:    data_mocks.NewMockUserRepository(true),
 			wantErr:     true,

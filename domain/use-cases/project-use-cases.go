@@ -38,3 +38,27 @@ func (p ProjectUseCase) CreateProject(project *entities.Project, userId string) 
 	}
 	return nil
 }
+
+func (p ProjectUseCase) FindAllProjects() ([]entities.Project, error) {
+	projects, err := p.projectRepository.FindAllProjects()
+	if err != nil {
+		return nil, err
+	}
+	return projects, nil
+}
+
+func (p ProjectUseCase) FindProjectsByUserId(userId string) ([]entities.Project, error) {
+	usr, err := p.UserRepository.FindUserById(userId)
+	if usr == nil {
+		return nil, entityNotFound("user", "id", map[string]string{userId: userId})
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	projects, err := p.projectRepository.FindProjectsByUserId(userId)
+	if err != nil {
+		return nil, err
+	}
+	return projects, nil
+}

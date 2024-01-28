@@ -6,3 +6,12 @@ type UserUseCases interface {
 	CreateUser(user *entities.User) error
 	FindUserByEmail(email string) (*entities.User, error)
 }
+
+type ProjectUseCases interface {
+	CreateProject(project *entities.Project) error
+	FindAllProjects() ([]entities.Project, error)
+	FindProjectsByUserId(userId string) ([]entities.Project, error)
+	FindProjectById(projectId string) (*entities.Project, error)
+	UpdateProject(project *entities.Project) error
+	DeleteProject(projectId string) error
+}

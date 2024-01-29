@@ -56,7 +56,7 @@ func TestNewProject(t *testing.T) {
 	}
 	for _, tC := range testCases {
 		t.Run(tC.description, func(t *testing.T) {
-			_, err := entities.NewProject(tC.project.Name, tC.project.Description, tC.project.Link, tC.project.Image)
+			_, err := entities.NewProject(tC.project)
 			if tC.wantErr && err == nil {
 				t.Errorf("NewProject() error = %v, wantErr %v", err, tC.wantErr)
 			}

@@ -73,8 +73,8 @@ func (r *ProjectRepository) FindProjectsByUserId(userId string) ([]aggregates.Pr
 	var nullUserImage, nullProjectImage sql.NullString
 	rows, err := r.db.Query(`
 			SELECT 
-					p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, 
-					u.fullName, u.email, u.image
+				p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, 
+				u.id, u.full_name, u.email, u.image
 			FROM projects p
 			JOIN users u ON p.user_id = u.id
 			WHERE p.delete_at IS NULL AND p.user_id = $1
@@ -91,7 +91,7 @@ func (r *ProjectRepository) FindProjectsByUserId(userId string) ([]aggregates.Pr
 		var user entities.User
 		err := rows.Scan(
 			&project.ID, &project.Name, &project.Description, &nullProjectImage, &project.CreatedAt, &project.UpdatedAt, &project.DeleteAt,
-			&user.FullName, &user.Email, &nullUserImage,
+			&user.ID, &user.FullName, &user.Email, &nullUserImage,
 		)
 		if err != nil {
 			return nil, err

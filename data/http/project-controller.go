@@ -73,5 +73,20 @@ func (p ProjectController) FindAllProjects(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": projectsDTO})
+	c.JSON(http.StatusOK, projectsDTO)
+}
+
+func (p ProjectController) FindProjectsByUserId(c *gin.Context) {
+	userId := c.Param("userId")
+	projects, err := p.projectUseCase.FindProjectsByUserId(userId)
+	var projectsDTO []ProjectDTO
+	for _, project := range projects {
+		projectsDTO = append(projectsDTO, projectAggregateToDTO(project))
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, projectsDTO)
 }

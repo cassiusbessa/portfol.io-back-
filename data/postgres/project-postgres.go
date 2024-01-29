@@ -18,9 +18,9 @@ func NewProjectRepository(db *sql.DB) usecases.ProjectRepository {
 
 func (r *ProjectRepository) CreateProject(project *entities.Project, userId string) error {
 	_, err := r.db.Exec(`
-	INSERT INTO projects (id, name, description, image, created_at, updated_at, delete_at, user_id)
+	INSERT INTO projects (id, name, description, image, created_at, updated_at, user_id)
 	VALUES ($1, $2, $3, $4, $5, $6, $7);
-	`, project.ID, project.Name, project.Description, project.Image, project.CreatedAt, project.UpdatedAt, project.DeleteAt, userId)
+	`, project.ID, project.Name, project.Description, project.Image, project.CreatedAt, project.UpdatedAt, userId)
 	if err != nil {
 		return err
 	}

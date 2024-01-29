@@ -1,14 +1,16 @@
 package entities
 
+import "time"
+
 type Project struct {
 	ID          string
 	Name        string
 	Description string
 	Link        *string
 	Image       *string
-	CreatedAt   string
-	UpdatedAt   string
-	DeleteAt    *string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeleteAt    *time.Time
 }
 
 func (p Project) validateName(name string) error {
@@ -47,16 +49,17 @@ func (p Project) validator() error {
 	return nil
 }
 
-func NewProject(name, description string, link, image *string) (*Project, error) {
-	project := &Project{
-		Name:        name,
-		Description: description,
-		Link:        link,
-		Image:       image,
-	}
+func NewProject(project Project) (*Project, error) {
 	err := project.validator()
 	if err != nil {
 		return nil, err
 	}
-	return project, nil
+	return &Project{
+		Name:        project.Name,
+		Description: project.Description,
+		Link:        project.Link,
+		Image:       project.Image,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}, nil
 }

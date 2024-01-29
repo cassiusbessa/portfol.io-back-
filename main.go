@@ -33,10 +33,16 @@ func main() {
 	defer postgresDb.Close()
 
 	userRepo := postgres.NewUserRepository(postgresDb)
+	projectRepo := postgres.NewProjectRepository(postgresDb)
+
 	crypto := bcrypt.NewBcrypt()
 	token := jwt.NewJWT("secret")
+
 	userUseCase := usecases.NewUserUseCase(userRepo)
+	projectUseCase := usecases.NewProjectUseCase(projectRepo, userRepo)
+
 	userController := http.NewUserController(userUseCase, crypto, token)
+	projectController := http.NewProjectController(projectUseCase, userUseCase, token)
 
 	docs.SwaggerInfo.Title = "Orange Portfolio"
 	docs.SwaggerInfo.Description = "This provide endpoints to create a portofolio manager."
@@ -47,6 +53,8 @@ func main() {
 
 	r.POST("/users", userController.CreateUser)
 	r.POST("/login", userController.Login)
+
+	r.POST("/projects", projectController.CreateProject)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

@@ -9,13 +9,47 @@ import (
 
 func CreateDb(db *sql.DB) error {
 	fmt.Println("Creating database...")
+	if exists, err := checkDb(db); err != nil {
+		return err
+	} else if exists {
+		return nil
+	}
+
 	_, err := db.Exec(`
-	CREATE DATABASE orange_portfolio;
+		CREATE DATABASE orange_portfolio;
 	`)
+
 	if err != nil {
 		return fmt.Errorf("error creating database: %v", err)
 	}
-	err = createUserTable(db)
+	err = createTables(db)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func checkDb(db *sql.DB) (bool, error) {
+
+	var exists bool
+	err := db.QueryRow(`
+		SELECT EXISTS (
+			SELECT 1
+			FROM pg_database
+			WHERE datname = 'orange_portfolio'
+		);
+	`).Scan(&exists)
+
+	if err != nil {
+		return false, fmt.Errorf("error checking if database exists: %v", err)
+	}
+
+	return exists, nil
+}
+
+func createTables(db *sql.DB) error {
+	err := createUserTable(db)
 	if err != nil {
 		return err
 	}

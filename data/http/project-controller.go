@@ -10,12 +10,12 @@ import (
 )
 
 type ProjectController struct {
-	projectUseCase usecases.ProjectUseCase
-	userUseCase    usecases.UserUseCase
+	projectUseCase usecases.ProjectUseCases
+	userUseCase    usecases.UserUseCases
 	token          usecases.Token
 }
 
-func NewProjectController(projectUseCase usecases.ProjectUseCase, userUseCase usecases.UserUseCase, token usecases.Token) ProjectController {
+func NewProjectController(projectUseCase usecases.ProjectUseCases, userUseCase usecases.UserUseCases, token usecases.Token) ProjectController {
 	return ProjectController{
 		projectUseCase: projectUseCase,
 		userUseCase:    userUseCase,
@@ -89,4 +89,60 @@ func (p ProjectController) FindProjectsByUserId(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, projectsDTO)
+}
+
+func (p ProjectController) UpdateProject(c *gin.Context) {
+	var project entities.Project
+	err := c.ShouldBind(&project)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad Request"})
+		return
+	}
+
+	token := c.Request.Header.Get("Authorization")
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+	userId, err := p.token.GetPayload(token)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Unauthorized"})
+		return
+	}
+
+	newProject, err := entities.NewProject(project)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	newProject.ID = c.Param("projectId")
+	err = p.projectUseCase.UpdateProject(newProject, userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Projeto atualizado com sucesso"})
+}
+
+func (p ProjectController) DeleteProject(c *gin.Context) {
+	token := c.Request.Header.Get("Authorization")
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+	userId, err := p.token.GetPayload(token)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Unauthorized"})
+		return
+	}
+
+	projectId := c.Param("projectId")
+	err = p.projectUseCase.DeleteProject(projectId, userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Projeto deletado com sucesso"})
 }

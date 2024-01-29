@@ -138,7 +138,7 @@ func (r *ProjectRepository) UpdateProject(project *entities.Project) (*aggregate
 		SET name = $1, description = $2, image = $3, updated_at = $4
 		FROM users AS u
 		WHERE p.id = $5 AND p.user_id = u.id
-		RETURNING p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, u.fullName, u.email, u.image;
+		RETURNING p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, u.full_name, u.email, u.image;
 	`, project.Name, project.Description, project.Image, project.UpdatedAt, project.ID).Scan(
 		&project.ID, &project.Name, &project.Description, &nullProjectImage, &project.CreatedAt, &project.UpdatedAt, &project.DeleteAt,
 		&user.FullName, &user.Email, &nullUserImage,
@@ -152,14 +152,17 @@ func (r *ProjectRepository) UpdateProject(project *entities.Project) (*aggregate
 	return &fullProject, nil
 }
 
-func (r *ProjectRepository) DeleteProject(projectId string) error {
+func (r *ProjectRepository) DeleteProject(projectId, userId string) (bool, error) {
 	_, err := r.db.Exec(`
 		UPDATE projects
 		SET delete_at = NOW()
-		WHERE id = $1;
-	`, projectId)
-	if err != nil {
-		return err
+		WHERE id = $1 AND user_id = $2;
+	`, projectId, userId)
+	if err == sql.ErrNoRows {
+		return false, nil
 	}
-	return nil
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }

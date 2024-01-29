@@ -76,11 +76,13 @@ func (p ProjectUseCase) UpdateProject(project *entities.Project, userId string) 
 		return err
 	}
 
+	println(project.ID)
 	founded, err := p.projectRepository.FindProjectByNameAndUserId(project.Name, userId)
+	println(founded)
 	if err != nil {
 		return err
 	}
-	if founded != nil {
+	if founded != nil && founded.ID != project.ID {
 		possibleValues := map[string]string{project.Name: project.Name}
 		return entityAlreadyExists("project", "name", possibleValues)
 	}
@@ -88,6 +90,17 @@ func (p ProjectUseCase) UpdateProject(project *entities.Project, userId string) 
 	_, err = p.projectRepository.UpdateProject(project)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (p ProjectUseCase) DeleteProject(projectId, userId string) error {
+	deleted, err := p.projectRepository.DeleteProject(projectId, userId)
+	if err != nil {
+		return err
+	}
+	if !deleted {
+		return entityNotFound("project", "id and userId", map[string]string{projectId: projectId, userId: userId})
 	}
 	return nil
 }

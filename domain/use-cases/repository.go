@@ -17,5 +17,5 @@ type ProjectRepository interface {
 	FindProjectsByUserId(userId string) ([]aggregates.Project, error)
 	FindProjectByNameAndUserId(name, userId string) (*entities.Project, error)
 	UpdateProject(project *entities.Project) (*aggregates.Project, error)
-	DeleteProject(projectId string) error
+	DeleteProject(projectId, userId string) (bool, error)
 }

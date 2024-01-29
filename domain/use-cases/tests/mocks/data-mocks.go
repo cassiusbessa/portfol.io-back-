@@ -123,9 +123,9 @@ func (m *MockProjectRepository) UpdateProject(project *entities.Project) (*aggre
 	return nil, nil
 }
 
-func (m *MockProjectRepository) DeleteProject(projectId string) error {
+func (m *MockProjectRepository) DeleteProject(projectId, userId string) (bool, error) {
 	if m.foundedProject {
-		return nil
+		return true, nil
 	}
-	return fmt.Errorf("project not found")
+	return false, fmt.Errorf("project not found")
 }

@@ -59,5 +59,19 @@ func (p ProjectController) CreateProject(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Projeto criado com sucesso"})
+}
 
+func (p ProjectController) FindAllProjects(c *gin.Context) {
+	projects, err := p.projectUseCase.FindAllProjects()
+	var projectsDTO []ProjectDTO
+	for _, project := range projects {
+		projectsDTO = append(projectsDTO, projectAggregateToDTO(project))
+	}
+	if err != nil {
+		println(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server Error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": projectsDTO})
 }

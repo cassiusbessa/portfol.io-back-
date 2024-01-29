@@ -33,7 +33,7 @@ func (r *ProjectRepository) FindAllProjects() ([]aggregates.Project, error) {
 	rows, err := r.db.Query(`
 			SELECT 
 					p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, 
-					u.fullName, u.email, u.image
+					u.id, u.full_name, u.email, u.image
 			FROM projects p
 			JOIN users u ON p.user_id = u.id
 			WHERE p.delete_at IS NULL
@@ -50,7 +50,7 @@ func (r *ProjectRepository) FindAllProjects() ([]aggregates.Project, error) {
 		var user entities.User
 		err := rows.Scan(
 			&project.ID, &project.Name, &project.Description, &nullProjectImage, &project.CreatedAt, &project.UpdatedAt, &project.DeleteAt,
-			&user.FullName, &user.Email, &nullUserImage,
+			&user.ID, &user.FullName, &user.Email, &nullUserImage,
 		)
 		if err != nil {
 			return nil, err

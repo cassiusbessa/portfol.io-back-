@@ -55,6 +55,7 @@ func main() {
 	r.POST("/login", userController.Login)
 
 	r.POST("/projects", projectController.CreateProject)
+	r.GET("/projects", projectController.FindAllProjects)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

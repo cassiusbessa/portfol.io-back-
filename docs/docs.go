@@ -9,7 +9,15 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -17,6 +25,8 @@ const docTemplate = `{
     "paths": {
         "/login": {
             "post": {
+                "description": "Login with the provided information and get a api token",
+                "summary": "Login",
                 "parameters": [
                     {
                         "description": "User object to be logged in",
@@ -50,8 +60,145 @@ const docTemplate = `{
                 }
             }
         },
+        "/projects": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all projects of all users",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get all projects",
+                "responses": {
+                    "200": {
+                        "description": "List of projects",
+                        "schema": {
+                            "$ref": "#/definitions/http.ProjectDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized\" {\"message\": \"Unauthorized\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error\" {\"message\": \"Internal Server Error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new project with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create a new project",
+                "parameters": [
+                    {
+                        "description": "Project object to be created",
+                        "name": "project",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/http.CreateProjectDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Project created successfully\" {\"message\": \"Projeto criado com sucesso\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request\" {\"message\": \"Bad Request\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized\" {\"message\": \"Unauthorized\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error\" {\"message\": \"Internal Server Error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/users/{userId}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all projects of a user",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get all projects of a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of projects",
+                        "schema": {
+                            "$ref": "#/definitions/http.ProjectDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized\" {\"message\": \"Unauthorized\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error\" {\"message\": \"Internal Server Error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
+                "description": "Create a new user with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create a new user",
                 "parameters": [
                     {
                         "description": "User object to be created",
@@ -87,18 +234,57 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "http.CreateProjectDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Description of the project\nexample: This is a project to manage portfolios\nrequired: true",
+                    "type": "string",
+                    "example": "Project Description"
+                },
+                "image": {
+                    "description": "Image of the project\nexample: http://www.project.com/image\nrequired: false",
+                    "type": "string",
+                    "example": "http://www.project.com/image"
+                },
+                "link": {
+                    "description": "Link to the project\nexample: http://www.project.com\nrequired: false",
+                    "type": "string",
+                    "example": "http://www.project.com"
+                },
+                "name": {
+                    "description": "Name of the project\nexample: Orange Portfolio\nrequired: true",
+                    "type": "string",
+                    "example": "Project Name"
+                },
+                "tags": {
+                    "description": "Tags of the project\nexample: [\"tag1\", \"tag2\"]\nrequired: false",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "[\"tag1\"",
+                        " \"tag2\"]"
+                    ]
+                }
+            }
+        },
         "http.CreateUserDTO": {
             "type": "object",
             "properties": {
                 "email": {
+                    "description": "Email address of the user\nexample: email@email.com\nrequired: true",
                     "type": "string",
                     "example": "email@mail.com"
                 },
                 "fullName": {
+                    "description": "Full name of the user\nexample: Só Mais Silva\nrequired: true",
                     "type": "string",
                     "example": "Só Mais Silva"
                 },
                 "password": {
+                    "description": "User Password (8-32 characters, at least one uppercase letter, one lowercase letter, one number)\nexample: Password123!\nrequired: true",
                     "type": "string",
                     "example": "Password123!"
                 }
@@ -108,12 +294,63 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "email": {
+                    "description": "Email address of the user\n\nexample: email@mail.com\nrequired: true",
                     "type": "string",
                     "example": "email@mail.com"
                 },
                 "password": {
+                    "description": "User Password (8-32 characters, at least one uppercase letter, one lowercase letter, one number)\n\nexample: Password123!\nrequired: true",
                     "type": "string",
                     "example": "Password123!"
+                }
+            }
+        },
+        "http.ProjectDTO": {
+            "type": "object",
+            "properties": {
+                "project": {
+                    "$ref": "#/definitions/http.ProjectInfo"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "user": {
+                    "$ref": "#/definitions/http.UserInfo"
+                }
+            }
+        },
+        "http.ProjectInfo": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description of the project\nexample: This is a project to manage portfolios\nrequired: true",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the project\nexample: 123\nrequired: true",
+                    "type": "string"
+                },
+                "image": {
+                    "description": "Image of the project\nexample: http://www.project.com/image\nrequired: false",
+                    "type": "string"
+                },
+                "link": {
+                    "description": "Link to the project\nexample: http://www.project.com\nrequired: false",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name of the project\nexample: Orange Portfolio\nrequired: true",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "UpdatedAt of the project\nexample: 2021-08-01T00:00:00Z\nrequired: true",
+                    "type": "string"
                 }
             }
         },
@@ -121,6 +358,27 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "http.UserInfo": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email address of the user\nexample: email@email.com\nrequired: true",
+                    "type": "string"
+                },
+                "fullName": {
+                    "description": "Full name of the user\nexample: Só Mais Silva\nrequired: true",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the user\nexample: 123\nrequired: true",
+                    "type": "string"
+                },
+                "image": {
+                    "description": "Image of the user\nexample: http://www.user.com/image\nrequired: false",
                     "type": "string"
                 }
             }

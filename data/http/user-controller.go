@@ -24,11 +24,15 @@ func NewUserController(userUseCase usecases.UserUseCase, crypto usecases.Crypto,
 	}
 }
 
+// @Summary Create a new user
+// @Description Create a new user with the provided information
+// @Accept json
+// @Produce json
 // @Param user body CreateUserDTO true "User object to be created"
-// @Router /users [post]
 // @Success 201 {object} Response "User created successfully" {"message": "User created successfully"}
 // @Failure 400 {object} Response "Bad Request" {"message": "Bad Request"}
 // @Failure 500 {object} Response "Internal Server Error" {"message": "Internal Server Error"}
+// @Router /users [post]
 func (u UserController) CreateUser(c *gin.Context) {
 	var user entities.User
 	err := c.ShouldBind(&user)
@@ -59,6 +63,8 @@ func (u UserController) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Usuário criado com sucesso"})
 }
 
+// @Summary Login
+// @Description Login with the provided information and get a api token
 // @Param user body LoginDTO true "User object to be logged in"
 // @Router /login [post]
 // @Success 201 {object} Response "Token" {"token": "user_token"}

@@ -1,23 +1,139 @@
 definitions:
+  http.CreateProjectDTO:
+    properties:
+      description:
+        description: |-
+          Description of the project
+          example: This is a project to manage portfolios
+          required: true
+        example: Project Description
+        type: string
+      image:
+        description: |-
+          Image of the project
+          example: http://www.project.com/image
+          required: false
+        example: http://www.project.com/image
+        type: string
+      link:
+        description: |-
+          Link to the project
+          example: http://www.project.com
+          required: false
+        example: http://www.project.com
+        type: string
+      name:
+        description: |-
+          Name of the project
+          example: Orange Portfolio
+          required: true
+        example: Project Name
+        type: string
+      tags:
+        description: |-
+          Tags of the project
+          example: ["tag1", "tag2"]
+          required: false
+        example:
+        - '["tag1"'
+        - ' "tag2"]'
+        items:
+          type: string
+        type: array
+    type: object
   http.CreateUserDTO:
     properties:
       email:
+        description: |-
+          Email address of the user
+          example: email@email.com
+          required: true
         example: email@mail.com
         type: string
       fullName:
+        description: |-
+          Full name of the user
+          example: Só Mais Silva
+          required: true
         example: Só Mais Silva
         type: string
       password:
+        description: |-
+          User Password (8-32 characters, at least one uppercase letter, one lowercase letter, one number)
+          example: Password123!
+          required: true
         example: Password123!
         type: string
     type: object
   http.LoginDTO:
     properties:
       email:
+        description: |-
+          Email address of the user
+
+          example: email@mail.com
+          required: true
         example: email@mail.com
         type: string
       password:
+        description: |-
+          User Password (8-32 characters, at least one uppercase letter, one lowercase letter, one number)
+
+          example: Password123!
+          required: true
         example: Password123!
+        type: string
+    type: object
+  http.ProjectDTO:
+    properties:
+      project:
+        $ref: '#/definitions/http.ProjectInfo'
+      tags:
+        items:
+          type: string
+        type: array
+      user:
+        $ref: '#/definitions/http.UserInfo'
+    type: object
+  http.ProjectInfo:
+    properties:
+      createdAt:
+        type: string
+      description:
+        description: |-
+          Description of the project
+          example: This is a project to manage portfolios
+          required: true
+        type: string
+      id:
+        description: |-
+          ID of the project
+          example: 123
+          required: true
+        type: string
+      image:
+        description: |-
+          Image of the project
+          example: http://www.project.com/image
+          required: false
+        type: string
+      link:
+        description: |-
+          Link to the project
+          example: http://www.project.com
+          required: false
+        type: string
+      name:
+        description: |-
+          Name of the project
+          example: Orange Portfolio
+          required: true
+        type: string
+      updatedAt:
+        description: |-
+          UpdatedAt of the project
+          example: 2021-08-01T00:00:00Z
+          required: true
         type: string
     type: object
   http.Response:
@@ -25,11 +141,45 @@ definitions:
       message:
         type: string
     type: object
+  http.UserInfo:
+    properties:
+      email:
+        description: |-
+          Email address of the user
+          example: email@email.com
+          required: true
+        type: string
+      fullName:
+        description: |-
+          Full name of the user
+          example: Só Mais Silva
+          required: true
+        type: string
+      id:
+        description: |-
+          ID of the user
+          example: 123
+          required: true
+        type: string
+      image:
+        description: |-
+          Image of the user
+          example: http://www.user.com/image
+          required: false
+        type: string
+    type: object
 info:
-  contact: {}
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
 paths:
   /login:
     post:
+      description: Login with the provided information and get a api token
       parameters:
       - description: User object to be logged in
         in: body
@@ -50,8 +200,94 @@ paths:
           description: 'Internal Server Error" {"message": "Internal Server Error"}'
           schema:
             $ref: '#/definitions/http.Response'
+      summary: Login
+  /projects:
+    get:
+      description: Get all projects of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of projects
+          schema:
+            $ref: '#/definitions/http.ProjectDTO'
+        "401":
+          description: 'Unauthorized" {"message": "Unauthorized"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: 'Internal Server Error" {"message": "Internal Server Error"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get all projects
+    post:
+      consumes:
+      - application/json
+      description: Create a new project with the provided information
+      parameters:
+      - description: Project object to be created
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateProjectDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'Project created successfully" {"message": "Projeto criado
+            com sucesso"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "400":
+          description: 'Bad Request" {"message": "Bad Request"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "401":
+          description: 'Unauthorized" {"message": "Unauthorized"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: 'Internal Server Error" {"message": "Internal Server Error"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new project
+  /projects/users/{userId}:
+    get:
+      description: Get all projects of a user
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of projects
+          schema:
+            $ref: '#/definitions/http.ProjectDTO'
+        "401":
+          description: 'Unauthorized" {"message": "Unauthorized"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: 'Internal Server Error" {"message": "Internal Server Error"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get all projects of a user
   /users:
     post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided information
       parameters:
       - description: User object to be created
         in: body
@@ -59,6 +295,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/http.CreateUserDTO'
+      produces:
+      - application/json
       responses:
         "201":
           description: 'User created successfully" {"message": "User created successfully"}'
@@ -72,4 +310,5 @@ paths:
           description: 'Internal Server Error" {"message": "Internal Server Error"}'
           schema:
             $ref: '#/definitions/http.Response'
+      summary: Create a new user
 swagger: "2.0"

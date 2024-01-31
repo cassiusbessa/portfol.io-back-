@@ -21,6 +21,30 @@ type CreateUserDTO struct {
 	FullName string `json:"fullName" example:"Só Mais Silva" description:"Full name of the user"`
 }
 
+// UserDTO response payload to get a user
+// swagger:response UserDTO
+type UserDTO struct {
+	// ID of the user
+	// example: 123
+	// required: true
+	ID string `json:"id"`
+
+	// Full name of the user
+	// example: Só Mais Silva
+	// required: true
+	FullName string `json:"fullName"`
+
+	// Email address of the user
+	// example:email@email.com
+	// required: true
+	Email string `json:"email"`
+
+	// Image of the user
+	// example: http://www.user.com/image
+	// required: false
+	Image *string `json:"image"`
+}
+
 // LoginDTO request payload to login
 // swagger:parameters LoginDTO
 type LoginDTO struct {

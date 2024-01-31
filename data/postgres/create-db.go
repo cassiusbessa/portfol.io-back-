@@ -11,18 +11,17 @@ func CreateDb(db *sql.DB) error {
 	fmt.Println("Creating database...")
 	if exists, err := checkDb(db); err != nil {
 		return err
-	} else if exists {
-		return nil
+	} else if !exists {
+		_, err := db.Exec(`
+			CREATE DATABASE orange_portfolio;
+		`)
+
+		if err != nil {
+			return fmt.Errorf("error creating database: %v", err)
+		}
 	}
 
-	_, err := db.Exec(`
-		CREATE DATABASE orange_portfolio;
-	`)
-
-	if err != nil {
-		return fmt.Errorf("error creating database: %v", err)
-	}
-	err = createTables(db)
+	err := createTables(db)
 	if err != nil {
 		return err
 	}
@@ -54,6 +53,15 @@ func createTables(db *sql.DB) error {
 		return err
 	}
 	err = createProjectTable(db)
+	if err != nil {
+		return err
+	}
+
+	err = createTagTable(db)
+	if err != nil {
+		return err
+	}
+	err = createProjectTagTable(db)
 	if err != nil {
 		return err
 	}
@@ -95,6 +103,34 @@ func createProjectTable(db *sql.DB) error {
 	`)
 	if err != nil {
 		return fmt.Errorf("error creating project table: %v", err)
+	}
+	return nil
+}
+
+func createTagTable(db *sql.DB) error {
+	_, err := db.Exec(`
+	CREATE TABLE IF NOT EXISTS tags (
+		id VARCHAR(255) PRIMARY KEY,
+		name VARCHAR(255) NOT NULL
+	);
+	`)
+	if err != nil {
+		return fmt.Errorf("error creating tag table: %v", err)
+	}
+	return nil
+}
+
+func createProjectTagTable(db *sql.DB) error {
+	_, err := db.Exec(`
+	CREATE TABLE IF NOT EXISTS project_tags (
+		project_id VARCHAR(255) NOT NULL,
+		tag_id VARCHAR(255) NOT NULL,
+		FOREIGN KEY (project_id) REFERENCES projects(id),
+		FOREIGN KEY (tag_id) REFERENCES tags(id)
+	);
+	`)
+	if err != nil {
+		return fmt.Errorf("error creating project_tag table: %v", err)
 	}
 	return nil
 }

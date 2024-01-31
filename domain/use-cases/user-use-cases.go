@@ -33,3 +33,16 @@ func (u UserUseCase) FindUserByEmail(email string) (*entities.User, error) {
 	}
 	return user, nil
 }
+
+func (u UserUseCase) FindUserById(id string) (*entities.User, error) {
+	user, err := u.userRepository.FindUserById(id)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		possibleValues := map[string]string{id: id}
+		return nil, entityNotFound("user", "id", possibleValues)
+	}
+
+	return user, nil
+}

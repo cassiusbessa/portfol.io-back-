@@ -12,10 +12,10 @@ type UserRepository interface {
 }
 
 type ProjectRepository interface {
-	CreateProject(project *entities.Project, userId string) error
+	CreateProject(project *entities.Project, userId string, tagsIds []string) error
 	FindAllProjects() ([]aggregates.Project, error)
 	FindProjectsByUserId(userId string) ([]aggregates.Project, error)
 	FindProjectByNameAndUserId(name, userId string) (*entities.Project, error)
-	UpdateProject(project *entities.Project) (*aggregates.Project, error)
+	UpdateProject(project *entities.Project, tagsIds []string) (*aggregates.Project, error)
 	DeleteProject(projectId, userId string) (bool, error)
 }

@@ -11,9 +11,9 @@ type UserUseCases interface {
 }
 
 type ProjectUseCases interface {
-	CreateProject(project *entities.Project, userId string) error
+	CreateProject(project *entities.Project, userId string, tagsId []string) error
 	FindAllProjects() ([]aggregates.Project, error)
 	FindProjectsByUserId(userId string) ([]aggregates.Project, error)
-	UpdateProject(project *entities.Project, userId string) error
+	UpdateProject(project *entities.Project, userId string, tagsId []string) error
 	DeleteProject(projectId, userId string) error
 }

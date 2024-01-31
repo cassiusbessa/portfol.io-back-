@@ -38,7 +38,7 @@ func TestCreateProjectUseCase(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			projectUseCase := usecases.NewProjectUseCase(tc.projectRepo, tc.userRepo)
 			project := &entities.Project{}
-			err := projectUseCase.CreateProject(project, "any_id")
+			err := projectUseCase.CreateProject(project, "any_id", []string{"any_id"})
 			if tc.wantErr && err == nil {
 				t.Errorf("expected %v but got nil", tc.wantErr)
 			}

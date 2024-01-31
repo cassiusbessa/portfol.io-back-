@@ -53,7 +53,7 @@ func TestNewUser(t *testing.T) {
 			description: "should return error when user email is invalid",
 			user: entities.User{
 				FullName: user.FullName,
-				Email:    "invalidemail@email.com",
+				Email:    "invalid",
 				Password: user.Password,
 			},
 			wantErr: true,

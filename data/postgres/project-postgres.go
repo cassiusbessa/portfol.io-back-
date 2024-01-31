@@ -16,11 +16,42 @@ func NewProjectRepository(db *sql.DB) usecases.ProjectRepository {
 	return &ProjectRepository{db}
 }
 
-func (r *ProjectRepository) CreateProject(project *entities.Project, userId string) error {
-	_, err := r.db.Exec(`
-	INSERT INTO projects (id, name, description, image, created_at, updated_at, user_id)
-	VALUES ($1, $2, $3, $4, $5, $6, $7);
+func (r *ProjectRepository) CreateProject(project *entities.Project, userId string, tagsId []string) error {
+	var idValues string
+	for i, id := range tagsId {
+		if i == 0 {
+			idValues = id
+		} else {
+			idValues += ", " + id
+		}
+	}
+
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		err = tx.Commit()
+	}()
+
+	_, err = tx.Exec(`
+		INSERT INTO projects (id, name, description, image, created_at, updated_at, user_id)
+		VALUES ($1, $2, $3, $4, $5, $6, $7);
 	`, project.ID, project.Name, project.Description, project.Image, project.CreatedAt, project.UpdatedAt, userId)
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(`
+		INSERT INTO project_tags (project_id, tag_id)
+		SELECT $1, id
+		FROM tags
+		WHERE id IN ($2);
+	`, project.ID, idValues)
 	if err != nil {
 		return err
 	}
@@ -129,11 +160,24 @@ func (r *ProjectRepository) FindProjectByNameAndUserId(name, userId string) (*en
 	return &project, nil
 }
 
-func (r *ProjectRepository) UpdateProject(project *entities.Project) (*aggregates.Project, error) {
+func (r *ProjectRepository) UpdateProject(project *entities.Project, tagsId []string) (*aggregates.Project, error) {
 	var nullUserImage, nullProjectImage sql.NullString
 	var fullProject aggregates.Project
 	var user entities.User
-	err := r.db.QueryRow(`
+
+	tx, err := r.db.Begin()
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		err = tx.Commit()
+	}()
+
+	err = tx.QueryRow(`
 		UPDATE projects AS p
 		SET name = $1, description = $2, image = $3, updated_at = $4
 		FROM users AS u
@@ -148,6 +192,36 @@ func (r *ProjectRepository) UpdateProject(project *entities.Project) (*aggregate
 	}
 	project.Image = &nullProjectImage.String
 	user.Image = &nullUserImage.String
+
+	_, err = tx.Exec(`
+		DELETE FROM project_tags
+		WHERE project_id = $1;
+	`, project.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(tagsId) > 0 {
+		var idValues string
+		for i, id := range tagsId {
+			if i == 0 {
+				idValues = id
+			} else {
+				idValues += ", " + id
+			}
+		}
+
+		_, err = tx.Exec(`
+			INSERT INTO project_tags (project_id, tag_id)
+			SELECT $1, id
+			FROM tags
+			WHERE id IN ($2);
+		`, project.ID, idValues)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	fullProject = aggregates.NewProject(*project, user, nil)
 	return &fullProject, nil
 }

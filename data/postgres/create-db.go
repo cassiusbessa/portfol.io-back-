@@ -117,6 +117,48 @@ func createTagTable(db *sql.DB) error {
 	if err != nil {
 		return fmt.Errorf("error creating tag table: %v", err)
 	}
+
+	var count int
+	err = db.QueryRow("SELECT COUNT(*) FROM tags").Scan(&count)
+	if err != nil {
+		return fmt.Errorf("error checking existing tags: %v", err)
+	}
+
+	if count == 0 {
+		// Inserir valores base
+		_, err := db.Exec(`
+			INSERT INTO tags (id, name)
+			VALUES
+				('1', 'Backend'),
+				('2', 'Frontend'),
+				('3', 'UX/UI'),
+				('4', 'Mobile'),
+				('5', 'Data Science'),
+				('6', 'DevOps'),
+				('7', 'Cloud'),
+				('8', 'C'),
+				('9', 'C++'),
+				('10', 'C#'),
+				('11', 'Python'),
+				('12', 'Java'),
+				('13', 'JavaScript'),
+				('14', 'TypeScript'),
+				('15', 'HTML'),
+				('16', 'CSS'),
+				('17', 'React'),
+				('18', 'Angular'),
+				('19', 'Vue'),
+				('20', 'Node'),
+				('21', 'Go'),
+				('22', 'Ruby'),
+				('23', 'PHP'),
+				('24', 'SQL'),
+				('25', 'NoSQL');
+		`)
+		if err != nil {
+			return fmt.Errorf("error inserting base tags: %v", err)
+		}
+	}
 	return nil
 }
 

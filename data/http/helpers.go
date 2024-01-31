@@ -1,6 +1,9 @@
 package http
 
-import "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregates"
+import (
+	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregates"
+	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
+)
 
 func projectAggregateToDTO(project aggregates.Project) ProjectDTO {
 	return ProjectDTO{
@@ -20,5 +23,14 @@ func projectAggregateToDTO(project aggregates.Project) ProjectDTO {
 			Image:    project.User.Image,
 		},
 		Tags: project.Tags,
+	}
+}
+
+func userEntityToDTO(user entities.User) UserDTO {
+	return UserDTO{
+		ID:       user.ID,
+		FullName: user.FullName,
+		Email:    user.Email,
+		Image:    user.Image,
 	}
 }

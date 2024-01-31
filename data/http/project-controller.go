@@ -35,8 +35,8 @@ func NewProjectController(projectUseCase usecases.ProjectUseCases, userUseCase u
 // @Failure 500 {object} Response "Internal Server Error" {"message": "Internal Server Error"}
 // @Router /projects [post]
 func (p ProjectController) CreateProject(c *gin.Context) {
-	var project entities.Project
-	err := c.ShouldBind(&project)
+	var projectDTO CreateProjectDTO
+	err := c.ShouldBind(&projectDTO)
 	if err != nil {
 		println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad Request"})
@@ -54,6 +54,10 @@ func (p ProjectController) CreateProject(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Unauthorized"})
 		return
 	}
+	var project entities.Project
+	project.Name = projectDTO.Name
+	project.Description = projectDTO.Description
+	project.Image = projectDTO.Image
 
 	newProject, err := entities.NewProject(project)
 	if err != nil {
@@ -62,7 +66,7 @@ func (p ProjectController) CreateProject(c *gin.Context) {
 		return
 	}
 	newProject.ID = uuid.New().String()
-	err = p.projectUseCase.CreateProject(newProject, userId)
+	err = p.projectUseCase.CreateProject(newProject, userId, projectDTO.Tags)
 	if err != nil {
 		println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -168,7 +172,7 @@ func (p ProjectController) UpdateProject(c *gin.Context) {
 		return
 	}
 	newProject.ID = c.Param("projectId")
-	err = p.projectUseCase.UpdateProject(newProject, userId)
+	err = p.projectUseCase.UpdateProject(newProject, userId, nil)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return

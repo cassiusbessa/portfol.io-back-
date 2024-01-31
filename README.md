@@ -21,11 +21,9 @@ cd orange-portfolio-back
 Acesse o diretório do projeto, garanta que seu docker esteja rodando e suba o container docker, certifique-se de que as porta 5432 e 8080 estejam disponíveis em seu ambiente local:
 
 ```bash
-cd orange-portfolio-back
 sudo service docker start
 docker compose up -d --build
 ```
-
 
 ## Documentação da API
 

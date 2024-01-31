@@ -17,7 +17,7 @@ func (t Tag) ValidateName(name string) error {
 	return nil
 }
 
-func (t Tag) Validator() error {
+func (t Tag) validator() error {
 	err := t.ValidateName(t.Name)
 	if err != nil {
 		return err
@@ -26,7 +26,7 @@ func (t Tag) Validator() error {
 }
 
 func NewTag(tag Tag) (*Tag, error) {
-	err := tag.Validator()
+	err := tag.validator()
 	if err != nil {
 		return nil, err
 	}

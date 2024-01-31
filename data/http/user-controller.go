@@ -100,3 +100,36 @@ func (u UserController) Login(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
+
+// @Summary Get user information
+// @Description Get user information by api token
+// @Security ApiKeyAuth
+// @Router /me [get]
+// @Success 200 {object} UserDTO "User information"
+// @Failure 401 {object} Response "Unauthorized" {"message": "Unauthorized"}
+// @Failure 404 {object} Response "Not Found" {"message": "Usuário não encontrado"}
+// @Failure 500 {object} Response "Internal Server Error" {"message": "Internal Server Error"}
+func (u UserController) Me(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+
+	userId, err := u.token.GetPayload(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+
+	user, err := u.userUseCase.FindUserById(userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
+		return
+	}
+	if user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Usuário não encontrado"})
+		return
+	}
+	c.JSON(http.StatusOK, userEntityToDTO(*user))
+}

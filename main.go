@@ -53,6 +53,7 @@ func main() {
 
 	r.POST("/users", userController.CreateUser)
 	r.POST("/login", userController.Login)
+	r.GET("/me", userController.Me)
 
 	r.POST("/projects", projectController.CreateProject)
 	r.GET("/projects", projectController.FindAllProjects)

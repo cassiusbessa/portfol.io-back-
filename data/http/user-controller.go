@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
@@ -77,7 +76,6 @@ func (u UserController) Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
 		return
 	}
-	fmt.Println(loginRequest)
 	user, err := u.userUseCase.FindUserByEmail(loginRequest.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})

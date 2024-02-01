@@ -76,9 +76,7 @@ func (p ProjectUseCase) UpdateProject(project *entities.Project, userId string, 
 		return err
 	}
 
-	println(project.ID)
 	founded, err := p.projectRepository.FindProjectByNameAndUserId(project.Name, userId)
-	println(founded)
 	if err != nil {
 		return err
 	}

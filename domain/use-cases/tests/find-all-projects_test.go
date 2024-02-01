@@ -39,7 +39,6 @@ func TestFindAllProjectsUseCase(t *testing.T) {
 				t.Errorf("expected nil but got %v", err)
 			}
 			if len(projects) == 0 && tc.wantErr {
-				println(projects)
 				t.Errorf("expected a slice of projects but got an error")
 			}
 		})

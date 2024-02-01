@@ -141,6 +141,33 @@ definitions:
       message:
         type: string
     type: object
+  http.UserDTO:
+    properties:
+      email:
+        description: |-
+          Email address of the user
+          example:email@email.com
+          required: true
+        type: string
+      fullName:
+        description: |-
+          Full name of the user
+          example: Só Mais Silva
+          required: true
+        type: string
+      id:
+        description: |-
+          ID of the user
+          example: 123
+          required: true
+        type: string
+      image:
+        description: |-
+          Image of the user
+          example: http://www.user.com/image
+          required: false
+        type: string
+    type: object
   http.UserInfo:
     properties:
       email:
@@ -201,6 +228,29 @@ paths:
           schema:
             $ref: '#/definitions/http.Response'
       summary: Login
+  /me:
+    get:
+      description: Get user information by api token
+      responses:
+        "200":
+          description: User information
+          schema:
+            $ref: '#/definitions/http.UserDTO'
+        "401":
+          description: 'Unauthorized" {"message": "Unauthorized"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "404":
+          description: 'Not Found" {"message": "Usuário não encontrado"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: 'Internal Server Error" {"message": "Internal Server Error"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user information
   /projects:
     get:
       description: Get all projects of all users
@@ -256,6 +306,73 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Create a new project
+  /projects/{projectId}:
+    delete:
+      description: Delete a project with the provided information
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Project deleted successfully" {"message": "Projeto deletado
+            com sucesso"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "401":
+          description: 'Unauthorized" {"message": "Unauthorized"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: 'Internal Server Error" {"message": "Internal Server Error"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a project
+    put:
+      consumes:
+      - application/json
+      description: Update a project with the provided information
+      parameters:
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Project object to be updated
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateProjectDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Project updated successfully" {"message": "Projeto atualizado
+            com sucesso"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "400":
+          description: 'Bad Request" {"message": "Bad Request"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "401":
+          description: 'Unauthorized" {"message": "Unauthorized"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+        "500":
+          description: 'Internal Server Error" {"message": "Internal Server Error"}'
+          schema:
+            $ref: '#/definitions/http.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Update a project
   /projects/users/{userId}:
     get:
       description: Get all projects of a user

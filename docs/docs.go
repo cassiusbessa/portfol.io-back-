@@ -60,6 +60,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/me": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get user information by api token",
+                "summary": "Get user information",
+                "responses": {
+                    "200": {
+                        "description": "User information",
+                        "schema": {
+                            "$ref": "#/definitions/http.UserDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized\" {\"message\": \"Unauthorized\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found\" {\"message\": \"Usuário não encontrado\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error\" {\"message\": \"Internal Server Error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/projects": {
             "get": {
                 "security": [
@@ -172,6 +209,108 @@ const docTemplate = `{
                         "description": "List of projects",
                         "schema": {
                             "$ref": "#/definitions/http.ProjectDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized\" {\"message\": \"Unauthorized\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error\" {\"message\": \"Internal Server Error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{projectId}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update a project with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Update a project",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Project object to be updated",
+                        "name": "project",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/http.CreateProjectDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Project updated successfully\" {\"message\": \"Projeto atualizado com sucesso\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request\" {\"message\": \"Bad Request\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized\" {\"message\": \"Unauthorized\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error\" {\"message\": \"Internal Server Error\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a project with the provided information",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete a project",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Project deleted successfully\" {\"message\": \"Projeto deletado com sucesso\"}",
+                        "schema": {
+                            "$ref": "#/definitions/http.Response"
                         }
                     },
                     "401": {
@@ -358,6 +497,27 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "http.UserDTO": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email address of the user\nexample:email@email.com\nrequired: true",
+                    "type": "string"
+                },
+                "fullName": {
+                    "description": "Full name of the user\nexample: Só Mais Silva\nrequired: true",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the user\nexample: 123\nrequired: true",
+                    "type": "string"
+                },
+                "image": {
+                    "description": "Image of the user\nexample: http://www.user.com/image\nrequired: false",
                     "type": "string"
                 }
             }

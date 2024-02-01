@@ -87,7 +87,7 @@ type CreateProjectDTO struct {
 	// Tags of the project
 	// example: ["tag1", "tag2"]
 	// required: false
-	Tags []string `json:"tags" example:"[\"tag1\", \"tag2\"]" description:"Tags of the project"`
+	Tags []int `json:"tags" example:"[\"tag1\", \"tag2\"]" description:"Tags of the project"`
 }
 
 // ProjectDTO response payload to get all projects of a user
@@ -95,7 +95,7 @@ type CreateProjectDTO struct {
 type ProjectDTO struct {
 	Project ProjectInfo `json:"project"`
 	User    UserInfo    `json:"user"`
-	Tags    []string    `json:"tags"`
+	Tags    []int       `json:"tags"`
 }
 
 type ProjectInfo struct {

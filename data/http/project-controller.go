@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
@@ -54,6 +55,7 @@ func (p ProjectController) CreateProject(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Unauthorized"})
 		return
 	}
+
 	var project entities.Project
 	project.Name = projectDTO.Name
 	project.Description = projectDTO.Description
@@ -148,8 +150,8 @@ func (p ProjectController) FindProjectsByUserId(c *gin.Context) {
 // @Failure 500 {object} Response "Internal Server Error" {"message": "Internal Server Error"}
 // @Router /projects/{projectId} [put]
 func (p ProjectController) UpdateProject(c *gin.Context) {
-	var project entities.Project
-	err := c.ShouldBind(&project)
+	var projectDTO CreateProjectDTO
+	err := c.ShouldBind(&projectDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad Request"})
 		return
@@ -160,24 +162,31 @@ func (p ProjectController) UpdateProject(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
 		return
 	}
+
 	userId, err := p.token.GetPayload(token)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Unauthorized"})
 		return
 	}
 
+	projectId := c.Param("projectId")
+	var project entities.Project
+	project.Name = projectDTO.Name
+	project.Description = projectDTO.Description
+	project.Image = projectDTO.Image
+
 	newProject, err := entities.NewProject(project)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	newProject.ID = c.Param("projectId")
-	err = p.projectUseCase.UpdateProject(newProject, userId, nil)
+	newProject.ID = projectId
+	fmt.Println(projectDTO.Tags)
+	err = p.projectUseCase.UpdateProject(newProject, userId, projectDTO.Tags)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{"message": "Projeto atualizado com sucesso"})
 }
 

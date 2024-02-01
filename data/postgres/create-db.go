@@ -110,7 +110,7 @@ func createProjectTable(db *sql.DB) error {
 func createTagTable(db *sql.DB) error {
 	_, err := db.Exec(`
 	CREATE TABLE IF NOT EXISTS tags (
-		id VARCHAR(255) PRIMARY KEY,
+		id SERIAL PRIMARY KEY,
 		name VARCHAR(255) NOT NULL
 	);
 	`)
@@ -127,33 +127,33 @@ func createTagTable(db *sql.DB) error {
 	if count == 0 {
 		// Inserir valores base
 		_, err := db.Exec(`
-			INSERT INTO tags (id, name)
+			INSERT INTO tags (name)
 			VALUES
-				('1', 'Backend'),
-				('2', 'Frontend'),
-				('3', 'UX/UI'),
-				('4', 'Mobile'),
-				('5', 'Data Science'),
-				('6', 'DevOps'),
-				('7', 'Cloud'),
-				('8', 'C'),
-				('9', 'C++'),
-				('10', 'C#'),
-				('11', 'Python'),
-				('12', 'Java'),
-				('13', 'JavaScript'),
-				('14', 'TypeScript'),
-				('15', 'HTML'),
-				('16', 'CSS'),
-				('17', 'React'),
-				('18', 'Angular'),
-				('19', 'Vue'),
-				('20', 'Node'),
-				('21', 'Go'),
-				('22', 'Ruby'),
-				('23', 'PHP'),
-				('24', 'SQL'),
-				('25', 'NoSQL');
+				('Backend'),
+				('Frontend'),
+				('UX/UI'),
+				('Mobile'),
+				('Data Science'),
+				('DevOps'),
+				('Cloud'),
+				('C'),
+				('C++'),
+				('C#'),
+				('Python'),
+				('Java'),
+				('JavaScript'),
+				('TypeScript'),
+				('HTML'),
+				('CSS'),
+				('React'),
+				('Angular'),
+				('Vue'),
+				('Node'),
+				('Go'),
+				('Ruby'),
+				('PHP'),
+				('SQL'),
+				('NoSQL');
 		`)
 		if err != nil {
 			return fmt.Errorf("error inserting base tags: %v", err)
@@ -166,7 +166,7 @@ func createProjectTagTable(db *sql.DB) error {
 	_, err := db.Exec(`
 	CREATE TABLE IF NOT EXISTS project_tags (
 		project_id VARCHAR(255) NOT NULL,
-		tag_id VARCHAR(255) NOT NULL,
+		tag_id SERIAL NOT NULL,
 		FOREIGN KEY (project_id) REFERENCES projects(id),
 		FOREIGN KEY (tag_id) REFERENCES tags(id)
 	);

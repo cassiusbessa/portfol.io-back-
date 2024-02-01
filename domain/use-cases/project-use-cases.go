@@ -17,7 +17,7 @@ func NewProjectUseCase(projectRepository ProjectRepository, UserRepository UserR
 	}
 }
 
-func (p ProjectUseCase) CreateProject(project *entities.Project, userId string, tagsId []string) error {
+func (p ProjectUseCase) CreateProject(project *entities.Project, userId string, tagsId []int) error {
 	user, err := p.UserRepository.FindUserById(userId)
 	if user == nil {
 		return entityNotFound("user", "id", map[string]string{userId: userId})
@@ -67,7 +67,7 @@ func (p ProjectUseCase) FindProjectsByUserId(userId string) ([]aggregates.Projec
 	return projects, nil
 }
 
-func (p ProjectUseCase) UpdateProject(project *entities.Project, userId string, tagsId []string) error {
+func (p ProjectUseCase) UpdateProject(project *entities.Project, userId string, tagsId []int) error {
 	user, err := p.UserRepository.FindUserById(userId)
 	if user == nil {
 		return entityNotFound("user", "id", map[string]string{userId: userId})

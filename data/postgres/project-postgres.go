@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"strconv"
 
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregates"
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
@@ -16,13 +17,13 @@ func NewProjectRepository(db *sql.DB) usecases.ProjectRepository {
 	return &ProjectRepository{db}
 }
 
-func (r *ProjectRepository) CreateProject(project *entities.Project, userId string, tagsId []string) error {
+func (r *ProjectRepository) CreateProject(project *entities.Project, userId string, tagsId []int) error {
 	var idValues string
 	for i, id := range tagsId {
 		if i == 0 {
-			idValues = id
+			idValues = strconv.Itoa(id)
 		} else {
-			idValues += ", " + id
+			idValues += ", " + strconv.Itoa(id)
 		}
 	}
 
@@ -47,14 +48,15 @@ func (r *ProjectRepository) CreateProject(project *entities.Project, userId stri
 	}
 
 	_, err = tx.Exec(`
-		INSERT INTO project_tags (project_id, tag_id)
-		SELECT $1, id
-		FROM tags
-		WHERE id IN ($2);
-	`, project.ID, idValues)
+	INSERT INTO project_tags (project_id, tag_id)
+	SELECT $1, id
+	FROM tags
+	WHERE id IN (`+idValues+`);
+`, project.ID)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -160,7 +162,7 @@ func (r *ProjectRepository) FindProjectByNameAndUserId(name, userId string) (*en
 	return &project, nil
 }
 
-func (r *ProjectRepository) UpdateProject(project *entities.Project, tagsId []string) (*aggregates.Project, error) {
+func (r *ProjectRepository) UpdateProject(project *entities.Project, tagsId []int) (*aggregates.Project, error) {
 	var nullUserImage, nullProjectImage sql.NullString
 	var fullProject aggregates.Project
 	var user entities.User
@@ -205,9 +207,9 @@ func (r *ProjectRepository) UpdateProject(project *entities.Project, tagsId []st
 		var idValues string
 		for i, id := range tagsId {
 			if i == 0 {
-				idValues = id
+				idValues = strconv.Itoa(id)
 			} else {
-				idValues += ", " + id
+				idValues += ", " + strconv.Itoa(id)
 			}
 		}
 
@@ -215,8 +217,8 @@ func (r *ProjectRepository) UpdateProject(project *entities.Project, tagsId []st
 			INSERT INTO project_tags (project_id, tag_id)
 			SELECT $1, id
 			FROM tags
-			WHERE id IN ($2);
-		`, project.ID, idValues)
+			WHERE id IN (`+idValues+`);
+		`, project.ID)
 		if err != nil {
 			return nil, err
 		}

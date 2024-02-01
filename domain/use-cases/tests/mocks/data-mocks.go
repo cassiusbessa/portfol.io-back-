@@ -70,7 +70,7 @@ func NewMockProjectRepository(foundedProject bool) usecases.ProjectRepository {
 	}
 }
 
-func (m *MockProjectRepository) CreateProject(project *entities.Project, userId string, tagsId []string) error {
+func (m *MockProjectRepository) CreateProject(project *entities.Project, userId string, tagsId []int) error {
 	return nil
 }
 
@@ -112,7 +112,7 @@ func (m *MockProjectRepository) FindProjectByNameAndUserId(name, userId string) 
 	return nil, nil
 }
 
-func (m *MockProjectRepository) UpdateProject(project *entities.Project, tagsId []string) (*aggregates.Project, error) {
+func (m *MockProjectRepository) UpdateProject(project *entities.Project, tagsId []int) (*aggregates.Project, error) {
 	if m.foundedProject {
 		return &aggregates.Project{
 			Project: entities.Project{

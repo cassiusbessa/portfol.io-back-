@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
@@ -181,7 +180,6 @@ func (p ProjectController) UpdateProject(c *gin.Context) {
 		return
 	}
 	newProject.ID = projectId
-	fmt.Println(projectDTO.Tags)
 	err = p.projectUseCase.UpdateProject(newProject, userId, projectDTO.Tags)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})

@@ -19,3 +19,7 @@ type ProjectRepository interface {
 	UpdateProject(project *entities.Project, tagsIds []int) (*aggregates.Project, error)
 	DeleteProject(projectId, userId string) (bool, error)
 }
+
+type TagRepository interface {
+	FindAllTags() ([]entities.Tag, error)
+}

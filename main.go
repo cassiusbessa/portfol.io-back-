@@ -40,9 +40,11 @@ func main() {
 
 	userUseCase := usecases.NewUserUseCase(userRepo)
 	projectUseCase := usecases.NewProjectUseCase(projectRepo, userRepo)
+	tagUseCase := usecases.NewTagUseCase(postgres.NewTagRepository(postgresDb))
 
 	userController := http.NewUserController(userUseCase, crypto, token)
 	projectController := http.NewProjectController(projectUseCase, userUseCase, token)
+	tagController := http.NewTagController(tagUseCase, token)
 
 	docs.SwaggerInfo.Title = "Orange Portfolio"
 	docs.SwaggerInfo.Description = "This provide endpoints to create a portofolio manager."
@@ -60,6 +62,8 @@ func main() {
 	r.GET("/projects/users/:userId", projectController.FindProjectsByUserId)
 	r.PUT("/projects/:projectId", projectController.UpdateProject)
 	r.DELETE("/projects/:projectId", projectController.DeleteProject)
+
+	r.GET("/tags", tagController.FindAllTags)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

@@ -18,3 +18,7 @@ type ProjectUseCases interface {
 	UpdateProject(project *entities.Project, userId string, tagsId []int) error
 	DeleteProject(projectId, userId string) error
 }
+
+type TagUseCases interface {
+	FindAllTags() ([]entities.Tag, error)
+}

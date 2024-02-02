@@ -20,6 +20,7 @@ func NewTagController(tagUseCases usecases.TagUseCases, token usecases.Token) Ta
 }
 
 func (t TagController) FindAllTags(c *gin.Context) {
+	var tagsDTO []TagDTO
 	token := c.GetHeader("Authorization")
 	if token == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
@@ -35,5 +36,8 @@ func (t TagController) FindAllTags(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
-	c.JSON(http.StatusOK, tags)
+	for _, tag := range tags {
+		tagsDTO = append(tagsDTO, tagEntityToDTO(tag))
+	}
+	c.JSON(http.StatusOK, tagsDTO)
 }

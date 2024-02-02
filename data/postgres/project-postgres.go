@@ -63,7 +63,6 @@ func (r *ProjectRepository) CreateProject(project *entities.Project, userId stri
 
 func (r *ProjectRepository) FindAllProjects() ([]aggregates.Project, error) {
 	var projects []aggregates.Project
-	var nullUserImage, nullProjectImage sql.NullString
 	rows, err := r.db.Query(`
 		SELECT 
 			p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, 
@@ -84,6 +83,7 @@ func (r *ProjectRepository) FindAllProjects() ([]aggregates.Project, error) {
 
 	for rows.Next() {
 		var fullProject aggregates.Project
+		var nullUserImage, nullProjectImage sql.NullString
 		var tagNames string
 		var project entities.Project
 		var user entities.User
@@ -111,7 +111,6 @@ func (r *ProjectRepository) FindAllProjects() ([]aggregates.Project, error) {
 
 func (r *ProjectRepository) FindProjectsByUserId(userId string) ([]aggregates.Project, error) {
 	var projects []aggregates.Project
-	var nullUserImage, nullProjectImage sql.NullString
 	rows, err := r.db.Query(`
 		SELECT
 			p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at,
@@ -131,6 +130,7 @@ func (r *ProjectRepository) FindProjectsByUserId(userId string) ([]aggregates.Pr
 	defer rows.Close()
 
 	for rows.Next() {
+		var nullUserImage, nullProjectImage sql.NullString
 		var fullProject aggregates.Project
 		var project entities.Project
 		var user entities.User

@@ -1,7 +1,7 @@
 package entities
 
 type Tag struct {
-	ID   string
+	ID   int
 	Name string
 }
 

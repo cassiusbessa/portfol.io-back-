@@ -34,3 +34,10 @@ func userEntityToDTO(user entities.User) UserDTO {
 		Image:    user.Image,
 	}
 }
+
+func tagEntityToDTO(tag entities.Tag) TagDTO {
+	return TagDTO{
+		ID:   tag.ID,
+		Name: tag.Name,
+	}
+}

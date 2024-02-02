@@ -85,9 +85,9 @@ type CreateProjectDTO struct {
 	Image *string `json:"image" example:"http://www.project.com/image" description:"Image of the project"`
 
 	// Tags of the project
-	// example: ["tag1", "tag2"]
+	// example: [1, 12]
 	// required: false
-	Tags []int `json:"tags" example:"[\"tag1\", \"tag2\"]" description:"Tags of the project"`
+	Tags []int `json:"tags" example:"[20, 30]" description:"Tag ids of the project"`
 }
 
 // ProjectDTO response payload to get all projects of a user
@@ -158,6 +158,20 @@ type UserInfo struct {
 	// example: http://www.user.com/image
 	// required: false
 	Image *string `json:"image"`
+}
+
+// TagDTO response payload to get all tags
+// swagger:response TagDTO
+type TagDTO struct {
+	// ID of the tag
+	// example: 123
+	// required: true
+	ID int `json:"id"`
+
+	// Name of the tag
+	// example: Backend
+	// required: true
+	Name string `json:"name"`
 }
 
 type Response struct {

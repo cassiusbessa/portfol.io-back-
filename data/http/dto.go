@@ -95,7 +95,7 @@ type CreateProjectDTO struct {
 type ProjectDTO struct {
 	Project ProjectInfo `json:"project"`
 	User    UserInfo    `json:"user"`
-	Tags    []int       `json:"tags"`
+	Tags    []string    `json:"tags"`
 }
 
 type ProjectInfo struct {

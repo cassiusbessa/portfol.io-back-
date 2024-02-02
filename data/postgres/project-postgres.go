@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"strconv"
+	"strings"
 
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregates"
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
@@ -64,14 +65,18 @@ func (r *ProjectRepository) FindAllProjects() ([]aggregates.Project, error) {
 	var projects []aggregates.Project
 	var nullUserImage, nullProjectImage sql.NullString
 	rows, err := r.db.Query(`
-			SELECT 
-					p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, 
-					u.id, u.full_name, u.email, u.image
-			FROM projects p
-			JOIN users u ON p.user_id = u.id
-			WHERE p.delete_at IS NULL
-			ORDER BY p.created_at DESC;
-	`)
+		SELECT 
+			p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, 
+			u.id, u.full_name, u.email, u.image,
+			ARRAY_AGG(t.name) AS tag_names
+		FROM projects p
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN project_tags pt ON p.id = pt.project_id
+		LEFT JOIN tags t ON pt.tag_id = t.id
+		WHERE p.delete_at IS NULL
+		GROUP BY p.id, u.id
+		ORDER BY p.created_at DESC;
+`)
 	if err != nil {
 		return nil, err
 	}
@@ -79,18 +84,21 @@ func (r *ProjectRepository) FindAllProjects() ([]aggregates.Project, error) {
 
 	for rows.Next() {
 		var fullProject aggregates.Project
+		var tagNames string
 		var project entities.Project
 		var user entities.User
 		err := rows.Scan(
 			&project.ID, &project.Name, &project.Description, &nullProjectImage, &project.CreatedAt, &project.UpdatedAt, &project.DeleteAt,
-			&user.ID, &user.FullName, &user.Email, &nullUserImage,
+			&user.ID, &user.FullName, &user.Email, &nullUserImage, &tagNames,
 		)
 		if err != nil {
 			return nil, err
 		}
 		project.Image = &nullProjectImage.String
 		user.Image = &nullUserImage.String
-		fullProject = aggregates.NewProject(project, user, nil)
+		tagNamesArray := strings.Split(tagNames[1:len(tagNames)-1], ", ")
+		tagNamesArray = strings.Split(tagNamesArray[0], ",")
+		fullProject = aggregates.NewProject(project, user, tagNamesArray)
 		projects = append(projects, fullProject)
 	}
 	err = rows.Err()
@@ -105,13 +113,17 @@ func (r *ProjectRepository) FindProjectsByUserId(userId string) ([]aggregates.Pr
 	var projects []aggregates.Project
 	var nullUserImage, nullProjectImage sql.NullString
 	rows, err := r.db.Query(`
-			SELECT 
-				p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, 
-				u.id, u.full_name, u.email, u.image
-			FROM projects p
-			JOIN users u ON p.user_id = u.id
-			WHERE p.delete_at IS NULL AND p.user_id = $1
-			ORDER BY p.created_at DESC;
+		SELECT
+			p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at,
+			u.id, u.full_name, u.email, u.image,
+			ARRAY_AGG(t.name) AS tag_names
+		FROM projects p
+		JOIN users u ON p.user_id = u.id
+		LEFT JOIN project_tags pt ON p.id = pt.project_id
+		LEFT JOIN tags t ON pt.tag_id = t.id
+		WHERE p.user_id = $1 AND p.delete_at IS NULL
+		GROUP BY p.id, u.id
+		ORDER BY p.created_at DESC;
 	`, userId)
 	if err != nil {
 		return nil, err
@@ -122,16 +134,19 @@ func (r *ProjectRepository) FindProjectsByUserId(userId string) ([]aggregates.Pr
 		var fullProject aggregates.Project
 		var project entities.Project
 		var user entities.User
+		var tagNames string
 		err := rows.Scan(
 			&project.ID, &project.Name, &project.Description, &nullProjectImage, &project.CreatedAt, &project.UpdatedAt, &project.DeleteAt,
-			&user.ID, &user.FullName, &user.Email, &nullUserImage,
+			&user.ID, &user.FullName, &user.Email, &nullUserImage, &tagNames,
 		)
 		if err != nil {
 			return nil, err
 		}
 		project.Image = &nullProjectImage.String
 		user.Image = &nullUserImage.String
-		fullProject = aggregates.NewProject(project, user, nil)
+		tagNamesArray := strings.Split(tagNames[1:len(tagNames)-1], ", ")
+		tagNamesArray = strings.Split(tagNamesArray[0], ",")
+		fullProject = aggregates.NewProject(project, user, tagNamesArray)
 		projects = append(projects, fullProject)
 	}
 	err = rows.Err()

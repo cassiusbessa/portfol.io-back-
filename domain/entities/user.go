@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"math"
 	"time"
 )
 
@@ -17,11 +16,11 @@ type User struct {
 }
 
 func (u User) validateFullName(fullName string) error {
-	err := emptyStringValidator(fullName, "fullName")
+	err := emptyStringValidator(fullName, "nome ou sobrenome")
 	if err != nil {
 		return err
 	}
-	err = invalidFieldLenghValidator(fullName, "fullName", 3, math.MaxUint8)
+	err = invalidFieldLenghValidator(fullName, "nome e sobrenome", 3, 50)
 	if err != nil {
 		return err
 	}
@@ -41,11 +40,11 @@ func (u User) validateEmail(email string) error {
 }
 
 func (u User) validatePass(pass string) error {
-	err := emptyStringValidator(pass, "pass")
+	err := emptyStringValidator(pass, "senha")
 	if err != nil {
 		return err
 	}
-	err = invalidFieldLenghValidator(pass, "pass", 8, 32)
+	err = invalidFieldLenghValidator(pass, "senha", 8, 32)
 	if err != nil {
 		return err
 	}

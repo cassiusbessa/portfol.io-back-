@@ -37,19 +37,15 @@ func passwordPatternValidator(password string) error {
 	lowercaseRegex := `.*[a-z].*`
 	uppercaseRegex := `.*[A-Z].*`
 	digitRegex := `.*\d.*`
-	specialCharRegex := `.*[\W_].*`
 
 	if !regexp.MustCompile(lowercaseRegex).MatchString(password) {
-		return InvalidPatternError("password", "lowercase")
+		return InvalidPatternError("senha", "minúscula")
 	}
 	if !regexp.MustCompile(uppercaseRegex).MatchString(password) {
-		return InvalidPatternError("password", "uppercase")
+		return InvalidPatternError("senha", "maiúscula")
 	}
 	if !regexp.MustCompile(digitRegex).MatchString(password) {
-		return InvalidPatternError("password", "digit")
-	}
-	if !regexp.MustCompile(specialCharRegex).MatchString(password) {
-		return InvalidPatternError("password", "special character")
+		return InvalidPatternError("senha", "dígito numérico")
 	}
 	return nil
 }

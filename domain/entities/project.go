@@ -14,11 +14,11 @@ type Project struct {
 }
 
 func (p Project) validateName(name string) error {
-	err := emptyStringValidator(name, "name")
+	err := emptyStringValidator(name, "título do projeto")
 	if err != nil {
 		return err
 	}
-	err = invalidFieldLenghValidator(name, "name", 3, 32)
+	err = invalidFieldLenghValidator(name, "título do projeto", 3, 32)
 	if err != nil {
 		return err
 	}
@@ -26,11 +26,11 @@ func (p Project) validateName(name string) error {
 }
 
 func (p Project) validateDescription(description string) error {
-	err := emptyStringValidator(description, "description")
+	err := emptyStringValidator(description, "descrição do projeto")
 	if err != nil {
 		return err
 	}
-	err = invalidFieldLenghValidator(description, "description", 3, 255)
+	err = invalidFieldLenghValidator(description, "descrição do projeto", 3, 255)
 	if err != nil {
 		return err
 	}

@@ -82,13 +82,13 @@ func (u UserController) Login(c *gin.Context) {
 		return
 	}
 	if user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"message": "Email não encontrado"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "Email ou senha inválidos"})
 		return
 	}
 
 	if err = u.crypto.CompareHashAndPassword(user.Password, loginRequest.Password); err != nil {
 		println(err.Error())
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "Senha inválida"})
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Email ou senha inválidos"})
 		return
 	}
 	token, err := u.token.GenerateToken(user.ID)

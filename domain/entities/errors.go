@@ -15,11 +15,11 @@ func NegativeIntegerError(field string) error {
 }
 
 func InvalidEmailError() error {
-	return fmt.Errorf("email inválido")
+	return fmt.Errorf("Email inválido")
 }
 
 func InvalidPatternError(field, rule string) error {
-	return fmt.Errorf("\"%s\" deve ter pelo menos um  %s caracter", field, rule)
+	return fmt.Errorf("\"%s\" deve ter %s", field, rule)
 }
 
 func InvalidFieldRangeError(field string, min int, max int) error {

@@ -39,13 +39,13 @@ func passwordPatternValidator(password string) error {
 	digitRegex := `.*\d.*`
 
 	if !regexp.MustCompile(lowercaseRegex).MatchString(password) {
-		return InvalidPatternError("senha", "minúscula")
+		return InvalidPatternError("Senha", "pelo menos uma letra minúscula")
 	}
 	if !regexp.MustCompile(uppercaseRegex).MatchString(password) {
-		return InvalidPatternError("senha", "maiúscula")
+		return InvalidPatternError("Senha", "pelo menos uma letra maiúscula")
 	}
 	if !regexp.MustCompile(digitRegex).MatchString(password) {
-		return InvalidPatternError("senha", "dígito numérico")
+		return InvalidPatternError("Senha", "pelo menos um dígito numérico")
 	}
 	return nil
 }

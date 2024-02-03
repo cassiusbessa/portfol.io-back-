@@ -18,9 +18,14 @@ func NewProjectUseCase(projectRepository ProjectRepository, UserRepository UserR
 }
 
 func (p ProjectUseCase) CreateProject(project *entities.Project, userId string, tagsId []int) error {
+
+	if (tagsId == nil) || (len(tagsId) == 0 || len(tagsId) < 2) {
+		return invalidLength("Tags", 1, 2)
+	}
+
 	user, err := p.UserRepository.FindUserById(userId)
 	if user == nil {
-		return entityNotFound("user", "id", map[string]string{userId: userId})
+		return entityNotFound("Usuário", "id", userId)
 	}
 	if err != nil {
 		return err
@@ -31,8 +36,7 @@ func (p ProjectUseCase) CreateProject(project *entities.Project, userId string, 
 		return err
 	}
 	if founded != nil {
-		possibleValues := map[string]string{project.Name: project.Name}
-		return entityAlreadyExists("project", "name", possibleValues)
+		return entityAlreadyExists("Projeto", "Nome", project.Name)
 	}
 
 	err = p.projectRepository.CreateProject(project, userId, tagsId)
@@ -56,7 +60,7 @@ func (p ProjectUseCase) FindProjectsByUserId(userId string) ([]aggregates.Projec
 		return nil, err
 	}
 	if usr == nil {
-		return nil, entityNotFound("user", "id", map[string]string{userId: userId})
+		return nil, entityNotFound("Usuário", "id", userId)
 	}
 
 	projects, err := p.projectRepository.FindProjectsByUserId(userId)
@@ -68,9 +72,14 @@ func (p ProjectUseCase) FindProjectsByUserId(userId string) ([]aggregates.Projec
 }
 
 func (p ProjectUseCase) UpdateProject(project *entities.Project, userId string, tagsId []int) error {
+
+	if (tagsId == nil) || (len(tagsId) == 0 || len(tagsId) < 2) {
+		return invalidLength("Tags", 1, 2)
+	}
+
 	user, err := p.UserRepository.FindUserById(userId)
 	if user == nil {
-		return entityNotFound("user", "id", map[string]string{userId: userId})
+		return entityNotFound("Usuário", "id", userId)
 	}
 	if err != nil {
 		return err
@@ -81,8 +90,7 @@ func (p ProjectUseCase) UpdateProject(project *entities.Project, userId string, 
 		return err
 	}
 	if founded != nil && founded.ID != project.ID {
-		possibleValues := map[string]string{project.Name: project.Name}
-		return entityAlreadyExists("project", "name", possibleValues)
+		return entityAlreadyExists("Projeto", "Nome", project.Name)
 	}
 
 	_, err = p.projectRepository.UpdateProject(project, tagsId)
@@ -98,7 +106,7 @@ func (p ProjectUseCase) DeleteProject(projectId, userId string) error {
 		return err
 	}
 	if !deleted {
-		return entityNotFound("project", "id and userId", map[string]string{projectId: projectId, userId: userId})
+		return entityNotFound("Projeto", "id", projectId)
 	}
 	return nil
 }

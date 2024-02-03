@@ -15,8 +15,7 @@ func NewUserUseCase(userRepository UserRepository) UserUseCase {
 func (u UserUseCase) CreateUser(user *entities.User) error {
 	founded, _ := u.userRepository.FindUserByEmail(user.Email)
 	if founded != nil {
-		possibleValues := map[string]string{user.Email: user.Email}
-		return entityAlreadyExists("user", "email", possibleValues)
+		return entityAlreadyExists("usuário", "e-mail", user.Email)
 	}
 
 	err := u.userRepository.CreateUser(user)
@@ -40,8 +39,7 @@ func (u UserUseCase) FindUserById(id string) (*entities.User, error) {
 		return nil, err
 	}
 	if user == nil {
-		possibleValues := map[string]string{id: id}
-		return nil, entityNotFound("user", "id", possibleValues)
+		return nil, entityNotFound("usuário", "id", id)
 	}
 
 	return user, nil

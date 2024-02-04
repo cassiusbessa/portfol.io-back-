@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"fmt"
+
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregates"
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
 )
@@ -18,8 +20,8 @@ func NewProjectUseCase(projectRepository ProjectRepository, UserRepository UserR
 }
 
 func (p ProjectUseCase) CreateProject(project *entities.Project, userId string, tagsId []int) error {
-
-	if (tagsId == nil) || (len(tagsId) == 0 || len(tagsId) < 2) {
+	fmt.Println(tagsId)
+	if (tagsId == nil) || (len(tagsId) > 2 || len(tagsId) == 0) {
 		return invalidLength("Tags", 1, 2)
 	}
 

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregates"
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
@@ -186,7 +185,7 @@ func (r *ProjectRepository) UpdateProject(project *entities.Project, tagsId []in
 	var nullUserImage, nullProjectImage sql.NullString
 	var fullProject aggregates.Project
 	var user entities.User
-
+	fmt.Println(project)
 	tx, err := r.db.Begin()
 	if err != nil {
 		return nil, err
@@ -201,11 +200,11 @@ func (r *ProjectRepository) UpdateProject(project *entities.Project, tagsId []in
 
 	err = tx.QueryRow(`
 		UPDATE projects AS p
-		SET name = $1, description = $2, image = $3, link = $4, updated_at = $5
+		SET name = $1, description = $2, image = $3, link = $4, updated_at = NOW()
 		FROM users AS u
 		WHERE p.id = $5 AND p.user_id = u.id
 		RETURNING p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, u.full_name, u.email, u.image;
-	`, project.Name, project.Description, project.Image, project.Link, time.Now(), project.ID).Scan(
+	`, project.Name, project.Description, project.Image, project.Link, project.ID).Scan(
 		&project.ID, &project.Name, &project.Description, &nullProjectImage, &project.CreatedAt, &project.UpdatedAt, &project.DeleteAt,
 		&user.FullName, &user.Email, &nullUserImage,
 	)

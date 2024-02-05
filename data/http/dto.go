@@ -174,6 +174,13 @@ type TagDTO struct {
 	Name string `json:"name"`
 }
 
+type GoogleLoginDTO struct {
+	// Token from Google
+	// example: 123
+	// required: true
+	Token string `json:"token"`
+}
+
 type Response struct {
 	Message string `json:"message"`
 }

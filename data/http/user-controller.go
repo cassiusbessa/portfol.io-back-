@@ -5,21 +5,24 @@ import (
 
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
 	usecases "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/use-cases"
+	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type UserController struct {
-	userUseCase usecases.UserUseCase
-	crypto      usecases.Crypto
-	token       usecases.Token
+	userUseCase    usecases.UserUseCase
+	crypto         usecases.Crypto
+	token          usecases.Token
+	googleServices services.GoogleService
 }
 
-func NewUserController(userUseCase usecases.UserUseCase, crypto usecases.Crypto, token usecases.Token) UserController {
+func NewUserController(userUseCase usecases.UserUseCase, crypto usecases.Crypto, token usecases.Token, googleService services.GoogleService) UserController {
 	return UserController{
-		userUseCase: userUseCase,
-		crypto:      crypto,
-		token:       token,
+		userUseCase:    userUseCase,
+		crypto:         crypto,
+		token:          token,
+		googleServices: googleService,
 	}
 }
 
@@ -82,7 +85,7 @@ func (u UserController) Login(c *gin.Context) {
 		return
 	}
 	if user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"message": "Email ou senha inválidos"})
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Email ou senha inválidos"})
 		return
 	}
 
@@ -130,4 +133,51 @@ func (u UserController) Me(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, userEntityToDTO(*user))
+}
+
+func (u UserController) GoogleLogin(c *gin.Context) {
+	token := GoogleLoginDTO{}
+	err := c.ShouldBind(&token)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
+		return
+	}
+	userInfo, err := u.googleServices.GetUserPayload(token.Token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+	fuser, err := u.userUseCase.FindUserByEmail(userInfo.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
+		return
+	}
+	if fuser != nil {
+		token, err := u.token.GenerateToken(fuser.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"token": token})
+		return
+	}
+
+	user := entities.User{
+		ID:       uuid.New().String(),
+		Email:    userInfo.Email,
+		FullName: userInfo.Name,
+		Image:    &userInfo.Picture,
+		Password: uuid.New().String(),
+	}
+	err = u.userUseCase.CreateUser(&user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
+		return
+	}
+	orangeToken, err := u.token.GenerateToken(user.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal Server error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"token": orangeToken})
 }

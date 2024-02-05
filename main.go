@@ -9,6 +9,7 @@ import (
 	jwt "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/data/token"
 	docs "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/docs"
 	usecases "github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/use-cases"
+	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/services"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -42,7 +43,9 @@ func main() {
 	projectUseCase := usecases.NewProjectUseCase(projectRepo, userRepo)
 	tagUseCase := usecases.NewTagUseCase(postgres.NewTagRepository(postgresDb))
 
-	userController := http.NewUserController(userUseCase, crypto, token)
+	googleService := services.NewGoogleService()
+
+	userController := http.NewUserController(userUseCase, crypto, token, *googleService)
 	projectController := http.NewProjectController(projectUseCase, userUseCase, token)
 	tagController := http.NewTagController(tagUseCase, token)
 
@@ -55,6 +58,7 @@ func main() {
 
 	r.POST("/users", userController.CreateUser)
 	r.POST("/login", userController.Login)
+	r.POST("/google-login", userController.GoogleLogin)
 	r.GET("/me", userController.Me)
 
 	r.POST("/projects", projectController.CreateProject)

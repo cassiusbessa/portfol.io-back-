@@ -65,3 +65,4 @@ go test ./...
 
 - Implementar testes de integração
 - Desacoplar a camada http de dependências externas
+- Usar dotenv para gerenciar variáveis de ambiente

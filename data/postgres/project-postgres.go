@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"database/sql"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -151,7 +150,6 @@ func (r *ProjectRepository) FindProjectsByUserId(userId string) ([]aggregates.Pr
 		tagNamesArray = strings.Split(tagNamesArray[0], ",")
 		fullProject = aggregates.NewProject(project, user, tagNamesArray)
 		projects = append(projects, fullProject)
-		fmt.Println(projects)
 	}
 	err = rows.Err()
 	if err != nil {
@@ -185,7 +183,6 @@ func (r *ProjectRepository) UpdateProject(project *entities.Project, tagsId []in
 	var nullUserImage, nullProjectImage sql.NullString
 	var fullProject aggregates.Project
 	var user entities.User
-	fmt.Println(project)
 	tx, err := r.db.Begin()
 	if err != nil {
 		return nil, err

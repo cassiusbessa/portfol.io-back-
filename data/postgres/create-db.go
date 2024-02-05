@@ -94,6 +94,7 @@ func createProjectTable(db *sql.DB) error {
 		name VARCHAR(255) NOT NULL,
 		description text,
 		image text,
+		link text,
 		user_id VARCHAR(255) NOT NULL,
 		created_at timestamp NOT NULL,
 		updated_at timestamp NOT NULL,

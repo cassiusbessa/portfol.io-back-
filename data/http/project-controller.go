@@ -59,6 +59,7 @@ func (p ProjectController) CreateProject(c *gin.Context) {
 	project.Name = projectDTO.Name
 	project.Description = projectDTO.Description
 	project.Image = projectDTO.Image
+	project.Link = projectDTO.Link
 
 	newProject, err := entities.NewProject(project)
 	if err != nil {

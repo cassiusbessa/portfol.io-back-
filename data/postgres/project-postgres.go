@@ -2,8 +2,10 @@ package postgres
 
 import (
 	"database/sql"
+	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/aggregates"
 	"github.com/Grupo-38-Orange-Juice/orange-portfolio-back/domain/entities"
@@ -41,9 +43,9 @@ func (r *ProjectRepository) CreateProject(project *entities.Project, userId stri
 	}()
 
 	_, err = tx.Exec(`
-		INSERT INTO projects (id, name, description, image, created_at, updated_at, user_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7);
-	`, project.ID, project.Name, project.Description, project.Image, project.CreatedAt, project.UpdatedAt, userId)
+		INSERT INTO projects (id, name, description, image, link, created_at, updated_at, user_id)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+	`, project.ID, project.Name, project.Description, project.Image, project.Link, project.CreatedAt, project.UpdatedAt, userId)
 	if err != nil {
 		return err
 	}
@@ -65,7 +67,7 @@ func (r *ProjectRepository) FindAllProjects() ([]aggregates.Project, error) {
 	var projects []aggregates.Project
 	rows, err := r.db.Query(`
 		SELECT 
-			p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, 
+			p.id, p.name, p.description, p.image, p.link, p.created_at, p.updated_at, p.delete_at, 
 			u.id, u.full_name, u.email, u.image,
 			ARRAY_AGG(t.name) AS tag_names
 		FROM projects p
@@ -83,18 +85,19 @@ func (r *ProjectRepository) FindAllProjects() ([]aggregates.Project, error) {
 
 	for rows.Next() {
 		var fullProject aggregates.Project
-		var nullUserImage, nullProjectImage sql.NullString
+		var nullUserImage, nullProjectImage, nullProjectLink sql.NullString
 		var tagNames string
 		var project entities.Project
 		var user entities.User
 		err := rows.Scan(
-			&project.ID, &project.Name, &project.Description, &nullProjectImage, &project.CreatedAt, &project.UpdatedAt, &project.DeleteAt,
+			&project.ID, &project.Name, &project.Description, &nullProjectImage, &nullProjectLink, &project.CreatedAt, &project.UpdatedAt, &project.DeleteAt,
 			&user.ID, &user.FullName, &user.Email, &nullUserImage, &tagNames,
 		)
 		if err != nil {
 			return nil, err
 		}
 		project.Image = &nullProjectImage.String
+		project.Link = &nullProjectLink.String
 		user.Image = &nullUserImage.String
 		tagNamesArray := strings.Split(tagNames[1:len(tagNames)-1], ", ")
 		tagNamesArray = strings.Split(tagNamesArray[0], ",")
@@ -113,7 +116,7 @@ func (r *ProjectRepository) FindProjectsByUserId(userId string) ([]aggregates.Pr
 	var projects []aggregates.Project
 	rows, err := r.db.Query(`
 		SELECT
-			p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at,
+			p.id, p.name, p.description, p.image, p.link, p.created_at, p.updated_at, p.delete_at,
 			u.id, u.full_name, u.email, u.image,
 			ARRAY_AGG(t.name) AS tag_names
 		FROM projects p
@@ -130,24 +133,26 @@ func (r *ProjectRepository) FindProjectsByUserId(userId string) ([]aggregates.Pr
 	defer rows.Close()
 
 	for rows.Next() {
-		var nullUserImage, nullProjectImage sql.NullString
+		var nullUserImage, nullProjectImage, nullProjectLink sql.NullString
 		var fullProject aggregates.Project
 		var project entities.Project
 		var user entities.User
 		var tagNames string
 		err := rows.Scan(
-			&project.ID, &project.Name, &project.Description, &nullProjectImage, &project.CreatedAt, &project.UpdatedAt, &project.DeleteAt,
+			&project.ID, &project.Name, &project.Description, &nullProjectImage, &nullProjectLink, &project.CreatedAt, &project.UpdatedAt, &project.DeleteAt,
 			&user.ID, &user.FullName, &user.Email, &nullUserImage, &tagNames,
 		)
 		if err != nil {
 			return nil, err
 		}
 		project.Image = &nullProjectImage.String
+		project.Link = &nullProjectLink.String
 		user.Image = &nullUserImage.String
 		tagNamesArray := strings.Split(tagNames[1:len(tagNames)-1], ", ")
 		tagNamesArray = strings.Split(tagNamesArray[0], ",")
 		fullProject = aggregates.NewProject(project, user, tagNamesArray)
 		projects = append(projects, fullProject)
+		fmt.Println(projects)
 	}
 	err = rows.Err()
 	if err != nil {
@@ -196,11 +201,11 @@ func (r *ProjectRepository) UpdateProject(project *entities.Project, tagsId []in
 
 	err = tx.QueryRow(`
 		UPDATE projects AS p
-		SET name = $1, description = $2, image = $3, updated_at = $4
+		SET name = $1, description = $2, image = $3, link = $4, updated_at = $5
 		FROM users AS u
 		WHERE p.id = $5 AND p.user_id = u.id
 		RETURNING p.id, p.name, p.description, p.image, p.created_at, p.updated_at, p.delete_at, u.full_name, u.email, u.image;
-	`, project.Name, project.Description, project.Image, project.UpdatedAt, project.ID).Scan(
+	`, project.Name, project.Description, project.Image, project.Link, time.Now(), project.ID).Scan(
 		&project.ID, &project.Name, &project.Description, &nullProjectImage, &project.CreatedAt, &project.UpdatedAt, &project.DeleteAt,
 		&user.FullName, &user.Email, &nullUserImage,
 	)

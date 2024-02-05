@@ -75,7 +75,7 @@ func (p ProjectUseCase) FindProjectsByUserId(userId string) ([]aggregates.Projec
 
 func (p ProjectUseCase) UpdateProject(project *entities.Project, userId string, tagsId []int) error {
 
-	if (tagsId == nil) || (len(tagsId) == 0 || len(tagsId) < 2) {
+	if (tagsId == nil) || (len(tagsId) > 2 || len(tagsId) == 0) {
 		return invalidLength("Tags", 1, 2)
 	}
 
